@@ -426,14 +426,14 @@
     "variables": {
         "templatesFolder": "templates/feature-pattern-3",
         "templateUrl": "[concat(parameters('baseUrl'), variables('templatesFolder'), '/', parameters('patternName'), '.json')]",
-        "storage-settings": {
-            "mgmt": {
+        "storage-settings": [
+            {
                 "accounts": [ "[parameters('mgmtStorageAccountName')]" ],
                 "accountType": "[parameters('mgmtStorageAccountType')]",
                 "newOrExisting": "[parameters('mgmtStorageNewOrExisting')]",
                 "existingRg": "[parameters('mgmtStorageExistingResourceGroup')]"
             },
-            "web": {
+            {
                 "accounts": [
                     "[parameters('webStorageAccountName0')]",
                     "[parameters('webStorageAccountName1')]"
@@ -442,7 +442,7 @@
                 "newOrExisting": "[parameters('webStorageNewOrExisting')]",
                 "existingRg": "[parameters('webStorageExistingResourceGroup')]"
             },
-            "biz": {
+            {
                 "accounts": [
                     "[parameters('bizStorageAccountName0')]",
                     "[parameters('bizStorageAccountName1')]"
@@ -451,7 +451,7 @@
                 "newOrExisting": "[parameters('bizStorageNewOrExisting')]",
                 "existingRg": "[parameters('bizStorageExistingResourceGroup')]"
             },
-            "sql": {
+            {
                 "accounts": [
                     "[parameters('sqlStorageAccountName0')]",
                     "[parameters('sqlStorageAccountName1')]"
@@ -460,7 +460,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            "sqlFsw": {
+            {
                 "accounts": [
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
                 ],
@@ -468,7 +468,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            "sqlDiag": {
+            {
                 "accounts": [
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'diag')]",
                     "[concat(uniquestring(parameters('sqlStorageAccountName1')), 'diag')]"
@@ -477,7 +477,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            "dc": {
+            {
                 "accounts": [
                     "[parameters('dcStorageAccountName0')]",
                     "[parameters('dcStorageAccountName1')]"
@@ -486,7 +486,7 @@
                 "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
                 "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
             }
-        },
+        ],
         "vnet-settings": {
             "name": "[parameters('virtualNetworkName')]",
             "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
