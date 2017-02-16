@@ -1,0 +1,567 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the appropriate Repository Base URL containing Pattern Templates and Resource Templates"
+            },
+            "defaultValue": "https://raw.githubusercontent.com/mrptsai/",
+            "allowedValues": [
+                "https://raw.githubusercontent.com/mrptsai/"
+            ]
+        },
+        "patternName": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the appropriate Architectural Pattern"
+            },
+            "allowedValues": [
+                "vm-poc-1",
+                "vm-dsc-poc-1",
+                "vm-3tier-poc-1",
+                "vm-dual-poc-1",
+                "vm-3tier-sql-ha-1"
+            ]
+        },
+        "publicIPDnsName": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a DNS name to resolve to the Public IP Address"
+            },
+            "defaultValue": "test-projectijk"
+        },
+        "mgmtStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the Management Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'mgmt + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "mgmtStorageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS"
+            ],
+            "metadata": {
+                "description": "The type of the Managment Tier Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "mgmtStorageNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Storage Account New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "mgmtStorageExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
+            },
+            "defaultValue": ""
+        },
+        "webStorageAccountName0": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "webStorageAccountName1": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "webStorageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS"
+            ],
+            "metadata": {
+                "description": "The type of the Web Tier Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "webStorageNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Storage Account New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "webStorageExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
+            },
+            "defaultValue": ""
+        },
+        "bizStorageAccountName0": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "bizStorageAccountName1": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "bizStorageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS"
+            ],
+            "metadata": {
+                "description": "The type of the Business Tier Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "bizStorageNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Storage Account New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "bizStorageExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
+            },
+            "defaultValue": ""
+        },
+        "sqlStorageAccountName0": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every even SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "sqlStorageAccountName1": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every odd SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "sqlStorageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "The type of the Sql Server Storage Account created"
+            },
+            "defaultValue": "Premium_LRS"
+        },
+        "sqlStorageNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Storage Account New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "sqlStorageExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
+            },
+            "defaultValue": ""
+        },
+        "dcStorageAccountName0": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "dcStorageAccountName1": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
+            }
+        },
+        "dcStorageAccountType": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS"
+            ],
+            "metadata": {
+                "description": "The type of the Domain Controller Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "dcStorageNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Storage Account New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "dcStorageExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
+            },
+            "defaultValue": ""
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter a Name for a Virtual Network or specify the name of an existing Virtual Network."
+            }
+        },
+        "virtualNetworkNewOrExisting": {
+            "type": "string",
+            "metadata": {
+                "description": "Is the Virtual Network New or Existing?"
+            },
+            "allowedValues": [
+                "new",
+                "existing"
+            ]
+        },
+        "virtualNetworkExistingResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifiy the existing Virtual Network Resource Group. Leave blank if creating a new Virtual Network"
+            }
+        },
+        "virtualNetworkPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Virtual Network Prefix to create or to be used"
+            },
+            "defaultValue": "11.0.0.0/16"
+        },
+        "subnet0Prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the the Subnet Prefix for the Management Tier"
+            },
+            "defaultValue": "11.1.0.0/27"
+        },
+        "subnet0Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet name for the Management Tier to create or to be used"
+            },
+            "defaultValue": "mgmt"
+        },
+        "subnet1Prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the the Subnet Prefix for the Web Tier"
+            },
+            "defaultValue": "11.1.0.32/27"
+        },
+        "subnet1Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet name for the Web Tier to create or to be used"
+            },
+            "defaultValue": "web"
+        },
+        "subnet2Prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the the Subnet Prefix for the Biz Tier"
+            },
+            "defaultValue": "11.1.0.64/27"
+        },
+        "subnet2Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet name for the Biz Tier to create or to be used"
+            },
+            "defaultValue": "biz"
+        },
+        "subnet3Prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet Prefix for the SQL Tier"
+            },
+            "defaultValue": "11.1.0.96/27"
+        },
+        "subnet3Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet name for the sql Tier to create or to be used"
+            },
+            "defaultValue": "sql"
+        },
+        "subnet4Prefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet Prefix for the DC Tier"
+            },
+            "defaultValue": "11.1.0.128/27"
+        },
+        "subnet4Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the Subnet name for the sql Tier to create or to be used"
+            },
+            "defaultValue": "dc"
+        },
+        "adPriIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new AD VM"
+            },
+            "defaultValue": "11.1.0.129"
+        },
+        "adSecIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new backup AD VM"
+            },
+            "defaultValue": "11.1.0.130"
+        },
+        "bizLBIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new Biz Tier Internal Load Balancer"
+            },
+            "defaultValue": "11.1.0.94"
+        },
+        "bizPort": {
+            "type": "int",
+            "metadata": {
+                "description": "The Port Number for the Applicatin on the Business Tier"
+            },
+            "defaultValue": 1234
+        },
+        "sqlLBIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new SQL Tier Internal Load Balancer"
+            },
+            "defaultValue": "11.1.0.126"
+        },
+        "sqlPort": {
+            "type": "int",
+            "metadata": {
+                "description": "The Port number used by SQL"
+            },
+            "defaultValue": 49168
+        },
+        "vmAdminUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specify the VM local Logon Account that will have Administration Privileges"
+            },
+            "minLength": 1
+        },
+        "vmAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Enter a Password for the local Administration Account"
+            }
+        },
+        "vmCount": {
+            "type": "string",
+            "metadata": {
+                "description": "How many Virtual Machine do you want to deploy?"
+            },
+            "allowedValues": [ "2", "3", "4", "5" ]
+        },
+        "sqlCount": {
+            "type": "string",
+            "metadata": {
+                "description": "How many SQL Virtual Machines do you want to deploy int he Cluster?"
+            },
+            "allowedValues": [ "2", "4", "6", "8" ]
+        },
+        "sqlServerServiceAccountUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "The SQL Server Service Account name"
+            },
+            "defaultValue": "sqlservice"
+        },
+        "sqlServerServiceAccountPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The SQL Server Service Account password"
+            }
+        }
+    },
+    "variables": {
+        "templatesFolder": "templates/feature-pattern-3",
+        "templateUrl": "[concat(parameters('baseUrl'), variables('templatesFolder'), '/', parameters('patternName'), '.json')]",
+        "storage-settings": {
+            "mgmt": {
+                "accounts": [ "[parameters('mgmtStorageAccountName')]" ],
+                "type": "[parameters('mgmtStorageAccountType')]",
+                "newOrExisting": "[parameters('mgmtStorageNewOrExisting')]",
+                "existingRg": "[parameters('mgmtStorageExistingResourceGroup')]"
+            },
+            "web": {
+                "accounts": [
+                    "[parameters('webStorageAccountName0')]",
+                    "[parameters('webStorageAccountName1')]"
+                ],
+                "type": "[parameters('webStorageAccountType')]",
+                "newOrExisting": "[parameters('webStorageNewOrExisting')]",
+                "existingRg": "[parameters('webStorageExistingResourceGroup')]"
+            },
+            "biz": {
+                "accounts": [
+                    "[parameters('bizStorageAccountName0')]",
+                    "[parameters('bizStorageAccountName1')]"
+                ],
+                "type": "[parameters('bizStorageAccountType')]",
+                "newOrExisting": "[parameters('bizStorageNewOrExisting')]",
+                "existingRg": "[parameters('bizStorageExistingResourceGroup')]"
+            },
+            "sql": {
+                "accounts": [
+                    "[parameters('sqlStorageAccountName0')]",
+                    "[parameters('sqlStorageAccountName1')]"
+                ],
+                "type": "[parameters('sqlStorageAccountType')]",
+                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
+                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
+            },
+            "sqlFsw": {
+                "accounts": [
+                    "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
+                ],
+                "type": "Standard_LRS",
+                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
+                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
+            },
+            "sqlDiag": {
+                "accounts": [
+                    "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'diag')]",
+                    "[concat(uniquestring(parameters('sqlStorageAccountName1')), 'diag')]"
+                ],
+                "type": "Standard_LRS",
+                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
+                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
+            },
+            "dc": {
+                "accounts": [
+                    "[parameters('dcStorageAccountName0')]",
+                    "[parameters('dcStorageAccountName1')]"
+                ],
+                "type": "[parameters('dcStorageAccountType')]",
+                "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
+                "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
+            }
+        },
+        "vnet-settings": {
+            "name": "[parameters('virtualNetworkName')]",
+            "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
+            "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
+            "prefix": "[parameters('virtualNetworkPrefix')]",
+            "subnets": {
+                "subnet0Prefix": "[parameters('subnet0Prefix')]",
+                "subnet0Name": "[parameters('subnet0Name')]",
+                "subnet1Prefix": "[parameters('subnet1Prefix')]",
+                "subnet1Name": "[parameters('subnet1Name')]",
+                "subnet2Prefix": "[parameters('subnet2Prefix')]",
+                "subnet2Name": "[parameters('subnet2Name')]",
+                "subnet3Prefix": "[parameters('subnet3Prefix')]",
+                "subnet3Name": "[parameters('subnet3Name')]",
+                "subnet4Prefix": "[parameters('subnet3Prefix')]",
+                "subnet5Name": "[parameters('subnet3Name')]"
+            }
+        },
+        "pip-settings": {
+            "dnsName": "[parameters('publicIPDnsName')]",
+            "newOrExisting": "new",
+            "existingRg": null
+        },
+        "lb-settings": {
+            "dnsName": "[parameters('publicIPDnsName')]",
+            "internalIPAddresses": [
+                [ "[parameters('bizLBIPAddress')]" ],
+                [ "[parameters('sqlLBIPAddress')]" ]
+            ],
+            "internalPorts": [
+                [ "[parameters('bizPort')]" ],
+                [ "[parameters('sqlPort')]" ]
+            ],
+            "newOrExisting": "new",
+            "existingRg": null
+        },
+        "vm-settings": {
+            "adminUserName": "[parameters('vmAdminUserName')]",
+            "adminPassword": "[parameters('vmAdminPassword')]",
+            "count": "[int(parameters('vmCount'))]",
+            "type": 0
+
+        },
+        "dc-settings": {
+            "ipAddesses": [
+                [ "[parameters('adPriIpAddress')]" ],
+                [ "[parameters('adSecIpAddress')]" ]
+            ]
+
+        },
+        "sql-settings": {
+            "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
+            "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
+            "count": "[int(parameters('sqlCount'))]",
+            "type": 3
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('patternName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('templateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": "[variables('storage-settings')]"
+                    },
+                    "vnet-settings": {
+                        "value": "[variables('vnet-settings')]"
+                    },
+                    "pip-settings": {
+                        "value": "[variables('pip-settings')]"
+                    },
+                    "lb-settings": {
+                        "value": "[variables('lb-settings')]"
+                    },
+                    "vm-settings": {
+                        "value": "[variables('vm-settings')]"
+                    },
+                    "sql-settings": {
+                        "value": "[variables('sql-settings')]"
+                    },
+                    "baseUrl": {
+                        "value": "[parameters('baseUrl')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
