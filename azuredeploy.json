@@ -409,7 +409,7 @@
         "storage-settings": {
             "mgmt": {
                 "accounts": [ "[parameters('mgmtStorageAccountName')]" ],
-                "type": "[parameters('mgmtStorageAccountType')]",
+                "accountType": "[parameters('mgmtStorageAccountType')]",
                 "newOrExisting": "[parameters('mgmtStorageNewOrExisting')]",
                 "existingRg": "[parameters('mgmtStorageExistingResourceGroup')]"
             },
@@ -418,7 +418,7 @@
                     "[parameters('webStorageAccountName0')]",
                     "[parameters('webStorageAccountName1')]"
                 ],
-                "type": "[parameters('webStorageAccountType')]",
+                "accountType": "[parameters('webStorageAccountType')]",
                 "newOrExisting": "[parameters('webStorageNewOrExisting')]",
                 "existingRg": "[parameters('webStorageExistingResourceGroup')]"
             },
@@ -427,7 +427,7 @@
                     "[parameters('bizStorageAccountName0')]",
                     "[parameters('bizStorageAccountName1')]"
                 ],
-                "type": "[parameters('bizStorageAccountType')]",
+                "accountType": "[parameters('bizStorageAccountType')]",
                 "newOrExisting": "[parameters('bizStorageNewOrExisting')]",
                 "existingRg": "[parameters('bizStorageExistingResourceGroup')]"
             },
@@ -436,7 +436,7 @@
                     "[parameters('sqlStorageAccountName0')]",
                     "[parameters('sqlStorageAccountName1')]"
                 ],
-                "type": "[parameters('sqlStorageAccountType')]",
+                "accountType": "[parameters('sqlStorageAccountType')]",
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
@@ -444,7 +444,7 @@
                 "accounts": [
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
                 ],
-                "type": "Standard_LRS",
+                "accountType": "Standard_LRS",
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
@@ -453,7 +453,7 @@
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'diag')]",
                     "[concat(uniquestring(parameters('sqlStorageAccountName1')), 'diag')]"
                 ],
-                "type": "Standard_LRS",
+                "accountType": "Standard_LRS",
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
@@ -462,7 +462,7 @@
                     "[parameters('dcStorageAccountName0')]",
                     "[parameters('dcStorageAccountName1')]"
                 ],
-                "type": "[parameters('dcStorageAccountType')]",
+                "accountType": "[parameters('dcStorageAccountType')]",
                 "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
                 "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
             }
