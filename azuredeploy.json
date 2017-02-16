@@ -555,6 +555,9 @@
                     "sql-settings": {
                         "value": "[variables('sql-settings')]"
                     },
+                    "dc-settings": {
+                        "value": "[variables('dc-settings')]"
+                    },
                     "baseUrl": {
                         "value": "[parameters('baseUrl')]"
                     }
