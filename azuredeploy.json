@@ -485,7 +485,7 @@
                 "accountType": "[parameters('dcStorageAccountType')]",
                 "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
                 "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
-            },
+            }
         },
         "vnet-settings": {
             "name": "[parameters('virtualNetworkName')]",
