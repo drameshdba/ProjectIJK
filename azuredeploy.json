@@ -486,64 +486,64 @@
                 "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
                 "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
             },
-
-            "vnet-settings": {
-                "name": "[parameters('virtualNetworkName')]",
-                "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
-                "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
-                "prefix": "[parameters('virtualNetworkPrefix')]",
-                "subnets": {
-                    "subnet0Prefix": "[parameters('subnet0Prefix')]",
-                    "subnet0Name": "[parameters('subnet0Name')]",
-                    "subnet1Prefix": "[parameters('subnet1Prefix')]",
-                    "subnet1Name": "[parameters('subnet1Name')]",
-                    "subnet2Prefix": "[parameters('subnet2Prefix')]",
-                    "subnet2Name": "[parameters('subnet2Name')]",
-                    "subnet3Prefix": "[parameters('subnet3Prefix')]",
-                    "subnet3Name": "[parameters('subnet3Name')]",
-                    "subnet4Prefix": "[parameters('subnet3Prefix')]",
-                    "subnet5Name": "[parameters('subnet3Name')]"
-                }
-            },
-            "pip-settings": {
-                "dnsName": "[parameters('publicIPDnsName')]",
-                "newOrExisting": "new",
-                "existingRg": null
-            },
-            "lb-settings": {
-                "dnsName": "[parameters('publicIPDnsName')]",
-                "internalIPAddresses": [
-                    [ "[parameters('bizLBIPAddress')]" ],
-                    [ "[parameters('sqlLBIPAddress')]" ]
-                ],
-                "internalPorts": [
-                    [ "[parameters('bizPort')]" ],
-                    [ "[parameters('sqlPort')]" ]
-                ],
-                "newOrExisting": "new",
-                "existingRg": null
-            },
-            "vm-settings": {
-                "adminUserName": "[parameters('vmAdminUserName')]",
-                "adminPassword": "[parameters('vmAdminPassword')]",
-                "count": "[int(parameters('vmCount'))]",
-                "type": 0
-
-            },
-            "dc-settings": {
-                "ipAddesses": [
-                    [ "[parameters('adPriIpAddress')]" ],
-                    [ "[parameters('adSecIpAddress')]" ]
-                ]
-
-            },
-            "sql-settings": {
-                "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
-                "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-                "count": "[int(parameters('sqlCount'))]",
-                "type": 3
+        },
+        "vnet-settings": {
+            "name": "[parameters('virtualNetworkName')]",
+            "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
+            "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
+            "prefix": "[parameters('virtualNetworkPrefix')]",
+            "subnets": {
+                "subnet0Prefix": "[parameters('subnet0Prefix')]",
+                "subnet0Name": "[parameters('subnet0Name')]",
+                "subnet1Prefix": "[parameters('subnet1Prefix')]",
+                "subnet1Name": "[parameters('subnet1Name')]",
+                "subnet2Prefix": "[parameters('subnet2Prefix')]",
+                "subnet2Name": "[parameters('subnet2Name')]",
+                "subnet3Prefix": "[parameters('subnet3Prefix')]",
+                "subnet3Name": "[parameters('subnet3Name')]",
+                "subnet4Prefix": "[parameters('subnet3Prefix')]",
+                "subnet5Name": "[parameters('subnet3Name')]"
             }
         },
+        "pip-settings": {
+            "dnsName": "[parameters('publicIPDnsName')]",
+            "newOrExisting": "new",
+            "existingRg": null
+        },
+        "lb-settings": {
+            "dnsName": "[parameters('publicIPDnsName')]",
+            "internalIPAddresses": [
+                [ "[parameters('bizLBIPAddress')]" ],
+                [ "[parameters('sqlLBIPAddress')]" ]
+            ],
+            "internalPorts": [
+                [ "[parameters('bizPort')]" ],
+                [ "[parameters('sqlPort')]" ]
+            ],
+            "newOrExisting": "new",
+            "existingRg": null
+        },
+        "vm-settings": {
+            "adminUserName": "[parameters('vmAdminUserName')]",
+            "adminPassword": "[parameters('vmAdminPassword')]",
+            "count": "[int(parameters('vmCount'))]",
+            "type": 0
+
+        },
+        "dc-settings": {
+            "ipAddesses": [
+                [ "[parameters('adPriIpAddress')]" ],
+                [ "[parameters('adSecIpAddress')]" ]
+            ]
+
+        },
+        "sql-settings": {
+            "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
+            "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
+            "count": "[int(parameters('sqlCount'))]",
+            "type": 3
+        }
+    },
     "resources": [
         {
             "name": "[parameters('patternName')]",
