@@ -501,8 +501,8 @@
                 "subnet2Name": "[parameters('subnet2Name')]",
                 "subnet3Prefix": "[parameters('subnet3Prefix')]",
                 "subnet3Name": "[parameters('subnet3Name')]",
-                "subnet4Prefix": "[parameters('subnet3Prefix')]",
-                "subnet5Name": "[parameters('subnet3Name')]"
+                "subnet4Prefix": "[parameters('subnet4Prefix')]",
+                "subnet4Name": "[parameters('subnet4Name')]"
             }
         },
         "pip-settings": {
