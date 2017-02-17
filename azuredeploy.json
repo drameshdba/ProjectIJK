@@ -426,14 +426,14 @@
     "variables": {
         "templatesFolder": "templates/feature-pattern-3",
         "templateUrl": "[concat(parameters('baseUrl'), variables('templatesFolder'), '/', parameters('patternName'), '.json')]",
-        "storage-settings": [
-            {
+        "storage-settings": {
+            "mgmt": {
                 "accounts": [ "[parameters('mgmtStorageAccountName')]" ],
                 "accountType": "[parameters('mgmtStorageAccountType')]",
                 "newOrExisting": "[parameters('mgmtStorageNewOrExisting')]",
                 "existingRg": "[parameters('mgmtStorageExistingResourceGroup')]"
             },
-            {
+            "web": {
                 "accounts": [
                     "[parameters('webStorageAccountName0')]",
                     "[parameters('webStorageAccountName1')]"
@@ -442,7 +442,7 @@
                 "newOrExisting": "[parameters('webStorageNewOrExisting')]",
                 "existingRg": "[parameters('webStorageExistingResourceGroup')]"
             },
-            {
+            "biz": {
                 "accounts": [
                     "[parameters('bizStorageAccountName0')]",
                     "[parameters('bizStorageAccountName1')]"
@@ -451,7 +451,7 @@
                 "newOrExisting": "[parameters('bizStorageNewOrExisting')]",
                 "existingRg": "[parameters('bizStorageExistingResourceGroup')]"
             },
-            {
+            "sql": {
                 "accounts": [
                     "[parameters('sqlStorageAccountName0')]",
                     "[parameters('sqlStorageAccountName1')]"
@@ -460,7 +460,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            {
+            "fsw": {
                 "accounts": [
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
                 ],
@@ -468,7 +468,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            {
+            "diag": {
                 "accounts": [
                     "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'diag')]",
                     "[concat(uniquestring(parameters('sqlStorageAccountName1')), 'diag')]"
@@ -477,7 +477,7 @@
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
-            {
+            "dc": {
                 "accounts": [
                     "[parameters('dcStorageAccountName0')]",
                     "[parameters('dcStorageAccountName1')]"
@@ -485,65 +485,65 @@
                 "accountType": "[parameters('dcStorageAccountType')]",
                 "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
                 "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
-            }
-        ],
-        "vnet-settings": {
-            "name": "[parameters('virtualNetworkName')]",
-            "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
-            "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
-            "prefix": "[parameters('virtualNetworkPrefix')]",
-            "subnets": {
-                "subnet0Prefix": "[parameters('subnet0Prefix')]",
-                "subnet0Name": "[parameters('subnet0Name')]",
-                "subnet1Prefix": "[parameters('subnet1Prefix')]",
-                "subnet1Name": "[parameters('subnet1Name')]",
-                "subnet2Prefix": "[parameters('subnet2Prefix')]",
-                "subnet2Name": "[parameters('subnet2Name')]",
-                "subnet3Prefix": "[parameters('subnet3Prefix')]",
-                "subnet3Name": "[parameters('subnet3Name')]",
-                "subnet4Prefix": "[parameters('subnet3Prefix')]",
-                "subnet5Name": "[parameters('subnet3Name')]"
-            }
-        },
-        "pip-settings": {
-            "dnsName": "[parameters('publicIPDnsName')]",
-            "newOrExisting": "new",
-            "existingRg": null
-        },
-        "lb-settings": {
-            "dnsName": "[parameters('publicIPDnsName')]",
-            "internalIPAddresses": [
-                [ "[parameters('bizLBIPAddress')]" ],
-                [ "[parameters('sqlLBIPAddress')]" ]
-            ],
-            "internalPorts": [
-                [ "[parameters('bizPort')]" ],
-                [ "[parameters('sqlPort')]" ]
-            ],
-            "newOrExisting": "new",
-            "existingRg": null
-        },
-        "vm-settings": {
-            "adminUserName": "[parameters('vmAdminUserName')]",
-            "adminPassword": "[parameters('vmAdminPassword')]",
-            "count": "[int(parameters('vmCount'))]",
-            "type": 0
+            },
 
-        },
-        "dc-settings": {
-            "ipAddesses": [
-                [ "[parameters('adPriIpAddress')]" ],
-                [ "[parameters('adSecIpAddress')]" ]
-            ]
+            "vnet-settings": {
+                "name": "[parameters('virtualNetworkName')]",
+                "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
+                "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
+                "prefix": "[parameters('virtualNetworkPrefix')]",
+                "subnets": {
+                    "subnet0Prefix": "[parameters('subnet0Prefix')]",
+                    "subnet0Name": "[parameters('subnet0Name')]",
+                    "subnet1Prefix": "[parameters('subnet1Prefix')]",
+                    "subnet1Name": "[parameters('subnet1Name')]",
+                    "subnet2Prefix": "[parameters('subnet2Prefix')]",
+                    "subnet2Name": "[parameters('subnet2Name')]",
+                    "subnet3Prefix": "[parameters('subnet3Prefix')]",
+                    "subnet3Name": "[parameters('subnet3Name')]",
+                    "subnet4Prefix": "[parameters('subnet3Prefix')]",
+                    "subnet5Name": "[parameters('subnet3Name')]"
+                }
+            },
+            "pip-settings": {
+                "dnsName": "[parameters('publicIPDnsName')]",
+                "newOrExisting": "new",
+                "existingRg": null
+            },
+            "lb-settings": {
+                "dnsName": "[parameters('publicIPDnsName')]",
+                "internalIPAddresses": [
+                    [ "[parameters('bizLBIPAddress')]" ],
+                    [ "[parameters('sqlLBIPAddress')]" ]
+                ],
+                "internalPorts": [
+                    [ "[parameters('bizPort')]" ],
+                    [ "[parameters('sqlPort')]" ]
+                ],
+                "newOrExisting": "new",
+                "existingRg": null
+            },
+            "vm-settings": {
+                "adminUserName": "[parameters('vmAdminUserName')]",
+                "adminPassword": "[parameters('vmAdminPassword')]",
+                "count": "[int(parameters('vmCount'))]",
+                "type": 0
 
+            },
+            "dc-settings": {
+                "ipAddesses": [
+                    [ "[parameters('adPriIpAddress')]" ],
+                    [ "[parameters('adSecIpAddress')]" ]
+                ]
+
+            },
+            "sql-settings": {
+                "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
+                "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
+                "count": "[int(parameters('sqlCount'))]",
+                "type": 3
+            }
         },
-        "sql-settings": {
-            "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
-            "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-            "count": "[int(parameters('sqlCount'))]",
-            "type": 3
-        }
-    },
     "resources": [
         {
             "name": "[parameters('patternName')]",
