@@ -512,16 +512,14 @@
         },
         "lb-settings": {
             "dnsName": "[parameters('publicIPDnsName')]",
-            "internalIPAddresses": [
-                [ "[parameters('bizLBIPAddress')]" ],
-                [ "[parameters('sqlLBIPAddress')]" ]
-            ],
-            "internalPorts": [
-                [ "[parameters('bizPort')]" ],
-                [ "[parameters('sqlPort')]" ]
-            ],
-            "newOrExisting": "new",
-            "existingRg": null
+            "biz": {
+                "ipAddress": "[parameters('bizLBIPAddress')]",
+                "internalPorts": "[parameters('bizPort')]"
+            },
+            "sql": {
+                "ipAddress": "[parameters('sqlLBIPAddress')]",
+                "internalPorts": "[parameters('sqlPort')]"
+            }
         },
         "vm-settings": {
             "adminUserName": "[parameters('vmAdminUserName')]",
