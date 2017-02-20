@@ -2,587 +2,1010 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "baseUrl": {
-            "type": "string",
-            "metadata": {
-                "description": "Select the appropriate Repository Base URL containing Pattern Templates and Resource Templates"
-            },
-            "defaultValue": "https://raw.githubusercontent.com/mrptsai/",
-            "allowedValues": [
-                "https://raw.githubusercontent.com/mrptsai/"
-            ]
-        },
-        "patternName": {
-            "type": "string",
-            "metadata": {
-                "description": "Select the appropriate Architectural Pattern"
-            },
-            "allowedValues": [
-                "vm-poc-1",
-                "vm-dsc-poc-1",
-                "vm-3tier-poc-1",
-                "vm-dual-poc-1",
-                "vm-3tier-sql-ha-1"
-            ]
-        },
-        "publicIPDnsName": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a DNS name to resolve to the Public IP Address"
-            },
-            "defaultValue": "test-projectijk"
-        },
-        "mgmtStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the Management Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'mgmt + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "mgmtz0p6i7hfg8u4kol"
-        },
-        "mgmtStorageAccountType": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_LRS"
-            ],
-            "metadata": {
-                "description": "The type of the Managment Tier Storage Account created"
-            },
-            "defaultValue": "Standard_LRS"
-        },
-        "mgmtStorageNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Storage Account New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "mgmtStorageExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "webStorageAccountName0": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "web6jwtkaup40y8ld9"
-        },
-        "webStorageAccountName1": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "web6ab3e2ujtwoxizq"
-        },
-        "webStorageAccountType": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_LRS"
-            ],
-            "metadata": {
-                "description": "The type of the Web Tier Storage Account created"
-            },
-            "defaultValue": "Standard_LRS"
-        },
-        "webStorageNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Storage Account New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "webStorageExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "bizStorageAccountName0": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "bizsjaw1vfbe3tuno5"
-        },
-        "bizStorageAccountName1": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "biz297qeliogc35fu8"
-        },
-        "bizStorageAccountType": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_LRS"
-            ],
-            "metadata": {
-                "description": "The type of the Business Tier Storage Account created"
-            },
-            "defaultValue": "Standard_LRS"
-        },
-        "bizStorageNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Storage Account New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "bizStorageExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "sqlStorageAccountName0": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every even SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "sqlxtslrd7je3fv2gk"
-        },
-        "sqlStorageAccountName1": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every odd SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "sql21ax7igop3hwfcl"
-        },
-        "sqlStorageAccountType": {
-            "type": "string",
-            "allowedValues": [
-                "Premium_LRS"
-            ],
-            "metadata": {
-                "description": "The type of the Sql Server Storage Account created"
-            },
-            "defaultValue": "Premium_LRS"
-        },
-        "sqlStorageNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Storage Account New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "sqlStorageExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "dcStorageAccountName0": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "dcs2da1mz6n07pbvq"
-        },
-        "dcStorageAccountName1": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
-            },
-            "defaultValue": "dcyjxlatm16zv4u7i"
-        },
-        "dcStorageAccountType": {
-            "type": "string",
-            "allowedValues": [
-                "Standard_LRS"
-            ],
-            "metadata": {
-                "description": "The type of the Domain Controller Storage Account created"
-            },
-            "defaultValue": "Standard_LRS"
-        },
-        "dcStorageNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Storage Account New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "dcStorageExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "virtualNetworkName": {
-            "type": "string",
-            "metadata": {
-                "description": "Enter a Name for a Virtual Network or specify the name of an existing Virtual Network."
-            },
-            "defaultValue": "vnet-2"
-        },
-        "virtualNetworkNewOrExisting": {
-            "type": "string",
-            "metadata": {
-                "description": "Is the Virtual Network New or Existing?"
-            },
-            "allowedValues": [
-                "new",
-                "existing"
-            ],
-            "defaultValue": "existing"
-        },
-        "virtualNetworkExistingResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Specifiy the existing Virtual Network Resource Group. Leave blank if creating a new Virtual Network"
-            },
-            "defaultValue": "TEST-Melbourne"
-        },
-        "virtualNetworkPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Virtual Network Prefix to create or to be used"
-            },
-            "defaultValue": "10.1.0.0/16"
-        },
-        "subnet0Prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the the Subnet Prefix for the Management Tier"
-            },
-            "defaultValue": "10.1.0.0/27"
-        },
-        "subnet0Name": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet name for the Management Tier to create or to be used"
-            },
-            "defaultValue": "mgmt"
-        },
-        "subnet1Prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the the Subnet Prefix for the Web Tier"
-            },
-            "defaultValue": "10.1.0.32/27"
-        },
-        "subnet1Name": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet name for the Web Tier to create or to be used"
-            },
-            "defaultValue": "web"
-        },
-        "subnet2Prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the the Subnet Prefix for the Biz Tier"
-            },
-            "defaultValue": "10.1.0.64/27"
-        },
-        "subnet2Name": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet name for the Biz Tier to create or to be used"
-            },
-            "defaultValue": "biz"
-        },
-        "subnet3Prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet Prefix for the SQL Tier"
-            },
-            "defaultValue": "10.1.0.96/27"
-        },
-        "subnet3Name": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet name for the sql Tier to create or to be used"
-            },
-            "defaultValue": "sql"
-        },
-        "subnet4Prefix": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet Prefix for the DC Tier"
-            },
-            "defaultValue": "10.1.0.128/27"
-        },
-        "subnet4Name": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the Subnet name for the sql Tier to create or to be used"
-            },
-            "defaultValue": "dc"
-        },
-        "adPriIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP address of the new AD VM"
-            },
-            "defaultValue": "10.1.0.129"
-        },
-        "adSecIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP address of the new backup AD VM"
-            },
-            "defaultValue": "10.1.0.130"
-        },
-        "bizLBIPAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP address of the new Biz Tier Internal Load Balancer"
-            },
-            "defaultValue": "10.1.0.94"
-        },
-        "bizPort": {
-            "type": "int",
-            "metadata": {
-                "description": "The Port Number for the Applicatin on the Business Tier"
-            },
-            "defaultValue": 1234
-        },
-        "sqlLBIPAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP address of the new SQL Tier Internal Load Balancer"
-            },
-            "defaultValue": "10.1.0.126"
-        },
-        "sqlPort": {
-            "type": "int",
-            "metadata": {
-                "description": "The Port number used by SQL"
-            },
-            "defaultValue": 49168
-        },
-        "vmAdminUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "Specify the VM local Logon Account that will have Administration Privileges"
-            },
-            "minLength": 1,
-            "defaultValue": "adminuser"
-        },
-        "vmAdminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Enter a Password for the local Administration Account"
-            },
-            "defaultValue": "Windows@2016"
-        },
-        "vmCount": {
-            "type": "string",
-            "metadata": {
-                "description": "How many Virtual Machine do you want to deploy?"
-            },
-            "allowedValues": [ "2", "3", "4", "5" ]
-        },
-        "sqlCount": {
-            "type": "string",
-            "metadata": {
-                "description": "How many SQL Virtual Machines do you want to deploy int he Cluster?"
-            },
-            "allowedValues": [ "2", "4", "6", "8" ]
-        },
-        "sqlServerServiceAccountUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "The SQL Server Service Account name"
-            },
-            "defaultValue": "sqlservice"
-        },
-        "sqlServerServiceAccountPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The SQL Server Service Account password"
-            },
-            "defaultValue": "Windows@2016"
-        }
-    },
-    "variables": {
-        "templatesFolder": "templates/feature-pattern-3",
-        "templateUrl": "[concat(parameters('baseUrl'), variables('templatesFolder'), '/', parameters('patternName'), '.json')]",
         "storage-settings": {
-            "mgmt": {
-                "accounts": [ "[parameters('mgmtStorageAccountName')]" ],
-                "accountType": "[parameters('mgmtStorageAccountType')]",
-                "newOrExisting": "[parameters('mgmtStorageNewOrExisting')]",
-                "existingRg": "[parameters('mgmtStorageExistingResourceGroup')]"
-            },
-            "web": {
-                "accounts": [
-                    "[parameters('webStorageAccountName0')]",
-                    "[parameters('webStorageAccountName1')]"
-                ],
-                "accountType": "[parameters('webStorageAccountType')]",
-                "newOrExisting": "[parameters('webStorageNewOrExisting')]",
-                "existingRg": "[parameters('webStorageExistingResourceGroup')]"
-            },
-            "biz": {
-                "accounts": [
-                    "[parameters('bizStorageAccountName0')]",
-                    "[parameters('bizStorageAccountName1')]"
-                ],
-                "accountType": "[parameters('bizStorageAccountType')]",
-                "newOrExisting": "[parameters('bizStorageNewOrExisting')]",
-                "existingRg": "[parameters('bizStorageExistingResourceGroup')]"
-            },
-            "sql": {
-                "accounts": [
-                    "[parameters('sqlStorageAccountName0')]",
-                    "[parameters('sqlStorageAccountName1')]"
-                ],
-                "accountType": "[parameters('sqlStorageAccountType')]",
-                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
-                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
-            },
-            "fsw": {
-                "accounts": [
-                    "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
-                ],
-                "accountType": "Standard_LRS",
-                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
-                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
-            },
-            "diag": {
-                "accounts": [
-                    "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'diag')]",
-                    "[concat(uniquestring(parameters('sqlStorageAccountName1')), 'diag')]"
-                ],
-                "accountType": "Standard_LRS",
-                "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
-                "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
-            },
-            "dc": {
-                "accounts": [
-                    "[parameters('dcStorageAccountName0')]",
-                    "[parameters('dcStorageAccountName1')]"
-                ],
-                "accountType": "[parameters('dcStorageAccountType')]",
-                "newOrExisting": "[parameters('dcStorageNewOrExisting')]",
-                "existingRg": "[parameters('dcStorageExistingResourceGroup')]"
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
             }
         },
         "vnet-settings": {
-            "name": "[parameters('virtualNetworkName')]",
-            "newOrExisting": "[parameters('virtualNetworkNewOrExisting')]",
-            "existingRg": "[parameters('virtualNetworkExistingResourceGroup')]",
-            "prefix": "[parameters('virtualNetworkPrefix')]",
-            "subnets": {
-                "subnet0Prefix": "[parameters('subnet0Prefix')]",
-                "subnet0Name": "[parameters('subnet0Name')]",
-                "subnet1Prefix": "[parameters('subnet1Prefix')]",
-                "subnet1Name": "[parameters('subnet1Name')]",
-                "subnet2Prefix": "[parameters('subnet2Prefix')]",
-                "subnet2Name": "[parameters('subnet2Name')]",
-                "subnet3Prefix": "[parameters('subnet3Prefix')]",
-                "subnet3Name": "[parameters('subnet3Name')]",
-                "subnet4Prefix": "[parameters('subnet4Prefix')]",
-                "subnet4Name": "[parameters('subnet4Name')]"
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Network"
             }
         },
         "pip-settings": {
-            "dnsName": "[parameters('publicIPDnsName')]",
-            "newOrExisting": "new",
-            "existingRg": null
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Public IP Address"
+            }
         },
         "lb-settings": {
-            "dnsName": "[parameters('publicIPDnsName')]",
-            "biz": {
-                "ipAddress": "[parameters('bizLBIPAddress')]",
-                "internalPorts": "[parameters('bizPort')]"
-            },
-            "sql": {
-                "ipAddress": "[parameters('sqlLBIPAddress')]",
-                "internalPorts": "[parameters('sqlPort')]"
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the load balancers"
             }
         },
         "vm-settings": {
-            "adminUserName": "[parameters('vmAdminUserName')]",
-            "adminPassword": "[parameters('vmAdminPassword')]",
-            "count": "[int(parameters('vmCount'))]",
-            "type": 0
-
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Machine"
+            }
         },
         "dc-settings": {
-            "ipAddesses": [
-                [ "[parameters('adPriIpAddress')]" ],
-                [ "[parameters('adSecIpAddress')]" ]
-            ]
-
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for Domain Controllers"
+            }
         },
+
         "sql-settings": {
-            "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
-            "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-            "count": "[int(parameters('sqlCount'))]",
-            "type": 3
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
+            }
+        },
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Base URL for Resource and Shared Templates"
+            }
         }
+    },
+    "variables": {
+        "dscScriptsFolder": "dsc-scripts/feature-pattern-3",
+        "resourcesFolder": "resources/feature-pattern-3",
+        "dscScriptsUrl": "[concat(parameters('baseUrl'), variables('dscScriptsFolder'))]",
+        "resourcesUrl": "[concat(parameters('baseUrl'), variables('resourcesFolder'))]",
+        "avsTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-3tier-sql-ha-1-avs.json')]",
+        "diagTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-diag.template.json')]",
+        "dscTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-dsc.template.json')]",
+        "lbTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-3tier-sql-ha-1-lb.json')]",
+        "nicTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-3tier-sql-ha-1-nic.json')]",
+        "nsgTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-3tier-sql-ha-1-nsg.json')]",
+        "scriptTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-script.template.json')]",
+        "pipTemplate": "[concat(variables('resourcesUrl'), '/pip-', parameters('pip-settings').newOrExisting, '.template.json')]",
+        "storageTemplate": "[concat(variables('resourcesUrl'), '/vm-3tier-sql-ha-1-storage.json')]",
+        "vnetTemplate": "[concat(variables('resourcesUrl'), '/vnet-', parameters('vnet-settings').newOrExisting, '.template.json')]",
+        "dcCount": 2,
+        "bizLbBackendPoolName": "bizLb-backEnd",
+        "bizLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('bizLbName'))]",
+        "bizLbName": "bizLb",
+        "bizLbProbeName": "biz-probe",
+        "bizLbRuleName": "lb-rule-biz",
+        "extLbBackendPoolID": "[concat(variables('extLbID'),'/backendAddressPools/', variables('extLbBackendPoolName'))]",
+        "extLbBackendPoolName": "extLb-backEnd-http",
+        "extLbBackendPort": 3389,
+        "extLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('extLbName'))]",
+        "extLbName": "extLb",
+        "extLbProbeName": "http-probe",
+        "extLbRuleName": "lb-rule-http",
+        "math": {
+            "modulo2": [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+            "modulo3": [ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ]
+        },
+        "pipName": "web-pip",
+        "sqlLbBackendPoolName": "sqlLb-backEnd",
+        "sqlLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('sqlLbName'))]",
+        "sqlLbName": "sqlLb",
+        "sqlLbProbeName": "sql-probe",
+        "sqlLbRuleName": "lb-rule-sql",
+        "vmNamePrefix": "web-vm-",
+        "vmOS": [
+            [ "MicrosoftWindowsServer", "WindowsServer", "2016-Datacenter", "windows" ],
+            [ "Canonical", "UbuntuServer", "16.04-LTS", "linux" ],
+            [ "MicrosoftSQLServer", "SQL2016SP1-WS2016", "Enterprise", "windows" ]
+        ],
+        "vmDiag": [
+            [ "iaas-diagnostic", "Microsoft.Azure.Diagnostics", "IaaSDiagnostics", "1.8" ],
+            [ "linux-diagnostic", "Microsoft.OSTCExtensions", "LinuxDiagnostic", "2.3" ]
+        ],
+        "vmDscScript": [
+            [ "dsc-iis", "Microsoft.Powershell", "DSC", "2.9", "[variables('dscTemplate')]", "[variables('dscScriptsUrl')]", "iis-on-windows-vm", "iis-config-dsc", "Main" ],
+            [ "script-apache", "Microsoft.Azure.Extensions", "CustomScript", "2.0", "[variables('scriptTemplate')]", "[variables('dscScriptsUrl')]", "apache2-on-ubuntu-vm", "install_apache.sh", null ]
+        ],
+        "vmTemplate": "[concat(variables('resourcesUrl'), '/vm-', variables('vmOS')[parameters('vm-settings').type][3], '.template.json')]"
+
+
     },
     "resources": [
         {
-            "name": "[parameters('patternName')]",
+            "name": "storageAccounts",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('templateUrl')]",
+                    "uri": "[variables('storageTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "storage-settings": {
-                        "value": "[variables('storage-settings')]"
+                        "value": "[parameters('storage-settings')]"
                     },
+                    "resourcesUrl": {
+                        "value": "[variables('resourcesUrl')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "virtualNetwork",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
                     "vnet-settings": {
-                        "value": "[variables('vnet-settings')]"
+                        "value": {
+                            "name": "[parameters('vnet-settings').name]",
+                            "newOrExisting": "[parameters('vnet-settings').newOrExisting]",
+                            "existingRg": "[parameters('vnet-settings').existingRg]",
+                            "prefix": "[parameters('vnet-settings').prefix]",
+                            "subnets": [
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet0Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet1Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet1Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet2Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet2Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet3Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet3Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet4Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet4Prefix]"
+                                    }
+                                }
+                            ],
+                            "dnsSettings": []
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "availabilitySets",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('avsTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "avs-settings": {
+                        "value": {
+                            "mgmt": {
+                                "name": "mgmt-avs",
+                                "updateCount": 5,
+                                "faultCount": 3
+                            },
+                            "web": {
+                                "name": "web-avs",
+                                "updateCount": 5,
+                                "faultCount": 3
+                            },
+                            "biz": {
+                                "name": "biz-avs",
+                                "updateCount": 5,
+                                "faultCount": 3
+                            },
+                            "sql": {
+                                "name": "sql-avs",
+                                "updateCount": 5,
+                                "faultCount": 3
+                            },
+                            "dc": {
+                                "name": "dc-avs",
+                                "updateCount": 5,
+                                "faultCount": 3
+                            }
+                        }
                     },
+                    "resourcesUrl": {
+                        "value": "[variables('resourcesUrl')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "publicIp",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('pipTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
                     "pip-settings": {
-                        "value": "[variables('pip-settings')]"
-                    },
+                        "value": {
+                            "name": "[variables('pipName')]",
+                            "dnsName": "[parameters('pip-settings').dnsName]",
+                            "publicIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "loadBalancers",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'puplicIp')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lbTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
                     "lb-settings": {
-                        "value": "[variables('lb-settings')]"
+                        "dnsName": "[parameters('lb-settings').publicIPDnsName]",
+                        "ext": {
+                            "name": "[variables('extLbName')]",
+                            "backendPoolName": "[variables('extLbBackendPoolName')]",
+                            "backendPort": "[variables('extLbBackendPort')]",
+                            "probeName": "[variables('extLbProbeName')]",
+                            "ruleName": "[variables('extLbRuleName')]"
+                        },
+                        "biz": {
+                            "name": "[variables('bizLbName')]",
+                            "backendPoolName": "[variables('bizLbBackendPoolName')]",
+                            "ipAddress": "[parameters('lb-settings').biz.ipAddress]",
+                            "internalPorts": "[parameters('lb-settings').biz.internalPorts]",
+                            "probeName": "[variables('bizLbProbeName')]",
+                            "ruleName": "[variables('bizLbRuleName')]"
+                        },
+                        "sql": {
+                            "name": "[variables('sqlLbName')]",
+                            "backendPoolName": "[variables('sqlLbBackendPoolName')]",
+                            "ipAddress": "[parameters('lb-settings').sql.ipAddress]",
+                            "internalPorts": "[parameters('lb-settings').sql.internalPorts]",
+                            "probeName": "[variables('sqlLbProbeName')]",
+                            "ruleName": "[variables('sqlLbRuleName')]"
+                        },
+                        "newOrExisting": "new",
+                        "existingRg": null,
+                        "sqlCount": "[parameters('sql-settings').count]",
+                        "vmCount": "[parameters('vm-settings').count]"
                     },
-                    "vm-settings": {
-                        "value": "[variables('vm-settings')]"
+                    "resourcesUrl": {
+                        "value": "[variables('resourcesUrl')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "networkSecurityGroups",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'virtualNetwork')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": {
+                            "mgmt": {
+                                "name": "mgmt-nsg",
+                                "securityRules": [
+                                    {
+                                        "name": "rdp-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                            "destinationPortRange": "3389",
+                                            "access": "Allow",
+                                            "priority": 100
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-deny",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Deny",
+                                            "priority": 200
+                                        }
+                                    }
+                                ]
+                            },
+                            "web": {
+                                "name": "web-nsg",
+                                "securityRules": [
+                                    {
+                                        "name": "http-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                            "destinationPortRange": "80",
+                                            "access": "Allow",
+                                            "priority": 100
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "80",
+                                            "access": "Allow",
+                                            "priority": 200
+                                        }
+                                    },
+                                    {
+                                        "name": "rdp-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "3389",
+                                            "access": "Allow",
+                                            "priority": 300
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-deny",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Deny",
+                                            "priority": 400
+                                        }
+                                    }
+                                ]
+                            },
+                            "biz": {
+                                "name": "biz-nsg",
+                                "securityRules": [
+                                    {
+                                        "name": "web-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet1Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Allow",
+                                            "priority": 100
+                                        }
+                                    },
+                                    {
+                                        "name": "rdp-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "3389",
+                                            "access": "Allow",
+                                            "priority": 200
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-deny",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Deny",
+                                            "priority": 300
+                                        }
+                                    }
+                                ]
+                            },
+                            "sql": {
+                                "name": "sql-nsg",
+                                "securityRules": [
+                                    {
+                                        "name": "biz-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet2Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "49168",
+                                            "access": "Allow",
+                                            "priority": 100
+                                        }
+                                    },
+                                    {
+                                        "name": "rdp-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "3389",
+                                            "access": "Allow",
+                                            "priority": 200
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-deny",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Deny",
+                                            "priority": 300
+                                        }
+                                    }
+                                ]
+                            },
+                            "dc": {
+                                "name": "dc-nsg",
+                                "securityRules": [
+                                    {
+                                        "name": "ntp-allow",
+                                        "properties": {
+                                            "protocol": "UDP",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "123",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 100,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "rpc-allow",
+                                        "properties": {
+                                            "protocol": "TCP",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "135",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 110,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "kerberos-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "464",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 120,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "ldap-allow",
+                                        "properties": {
+                                            "protocol": "TCP",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "389",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 130,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "ldaps-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "636",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 140,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "gc-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "3268",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 150,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "gcs-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "3269",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 160,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "dns-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "53",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 170,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "kerberos2-allow",
+                                        "properties": {
+                                            "protocol": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "88",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 180,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "smb",
+                                        "properties": {
+                                            "protocol": "TCP",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "445",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 190,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "dynamic-allow",
+                                        "properties": {
+                                            "protocol": "TCP",
+                                            "sourcePortRange": "*",
+                                            "destinationPortRange": "49152-65535",
+                                            "sourceAddressPrefix": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "access": "Allow",
+                                            "priority": 200,
+                                            "direction": "Inbound"
+                                        }
+                                    },
+                                    {
+                                        "name": "rdp-allow",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "TCP",
+                                            "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "3389",
+                                            "access": "Allow",
+                                            "priority": 210
+                                        }
+                                    },
+                                    {
+                                        "name": "vnet-deny",
+                                        "properties": {
+                                            "direction": "Inbound",
+                                            "protocol": "*",
+                                            "sourceAddressPrefix": "*",
+                                            "sourcePortRange": "*",
+                                            "destinationAddressPrefix": "*",
+                                            "destinationPortRange": "*",
+                                            "access": "Deny",
+                                            "priority": 300
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "networkInterfaces",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'virtualNetwork')]",
+                "[resourceId('Microsoft.Resources/deployments', 'puplicIp')]",
+                "[resourceId('Microsoft.Resources/deployments', 'networkSecurityGroups')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "mgmt": {
+                                "name": "mgmt-nic",
+                                "count": 1,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet0Name)]"
+                                            },
+                                            "loadBalancerInboundNatRules": [
+                                                {
+                                                    "id": "[concat(variables('extLbID'), '/inboundNatRules/nat-rdp-mgmt')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'mgmt-nsg')]"
+                                }
+                            },
+                            "web": {
+                                "name": "web-nic-",
+                                "count": "[parameters('vm-settings').count]",
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet1Name)]"
+                                            },
+                                            "loadBalancerBackendAddressPools": [
+                                                {
+                                                    "id": "[variables('extLbBackendPoolID')]"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'web-nsg')]"
+                                }
+                            },
+                            "biz": {
+                                "name": "biz-nic-",
+                                "count": "[parameters('vm-settings').count]",
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet2Name)]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'biz-nsg')]"
+                                }
+                            },
+                            "sql": {
+                                "name": "sql-nic-",
+                                "count": "[parameters('sql-settings').count]",
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet3Name)]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'sql-nsg')]"
+                                }
+                            },
+                            "dc": {
+                                "name": "dc-nic-",
+                                "count": 2,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet4Name)]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'dc-nsg')]"
+                                }
+                            },
+                            "fsw": {
+                                "name": "fsw-nic",
+                                "count": 1,
+                                "ipConfigurations": [
+                                    {
+                                        "name": "ipconfig1",
+                                        "properties": {
+                                            "privateIPAllocationMethod": "Dynamic",
+                                            "subnet": {
+                                                "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet3Name)]"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "dnsSettings": {
+                                    "dnsServers": []
+                                },
+                                "enableIPForwarding": false,
+                                "networkSecurityGroup": {
+                                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'sql-nsg')]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "virtualMachines",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'storageAccounts')]",
+                "[resourceId('Microsoft.Resources/deployments', 'networkInterfaces')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "mgmt": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').mgmt.accounts[0]]",
+                                "accountType": "[parameters('storage-settings').mgmt.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').mgmt.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').mgmt.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "mgmt-vm",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'mgmt-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                                "nicName": "mgmt-nic",
+                                "vmSize": "Standard_D2_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
                     },
-                    "sql-settings": {
-                        "value": "[variables('sql-settings')]"
+                    "web": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').web.accounts[variables('math').modulo2[copyIndex()]]]",
+                                "accountType": "[parameters('storage-settings').web.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').web.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').web.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "web-vm-",
+                                "count": "[parameters('vm-settings').count]",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'web-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                                "nicName": "web-nic-",
+                                "vmSize": "Standard_D2_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
                     },
-                    "dc-settings": {
-                        "value": "[variables('dc-settings')]"
+                    "biz": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').biz.accounts[variables('math').modulo2[copyIndex()]]]",
+                                "accountType": "[parameters('storage-settings').biz.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').biz.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').biz.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "biz-vm-",
+                                "count": "[parameters('vm-settings').count]",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'biz-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                                "nicName": "biz-nic-",
+                                "vmSize": "Standard_D2_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
                     },
-                    "baseUrl": {
-                        "value": "[parameters('baseUrl')]"
+                    "sql": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').sql.accounts[variables('math').modulo2[copyIndex()]]]",
+                                "accountType": "[parameters('storage-settings').sql.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').sql.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').sql.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "sql-vm-",
+                                "count": "[parameters('sql-settings').count]",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'sql-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('sql-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('sql-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('sql-settings').type][2]]",
+                                "nicName": "sql-nic-",
+                                "vmSize": "Standard_DS4_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
+                    },
+                    "dc": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').dc.accounts[variables('math').modulo2[copyIndex()]]]",
+                                "accountType": "[parameters('storage-settings').dc.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').dc.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').dc.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "dc-vm-",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'dc-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                                "nicName": "dc-nic-",
+                                "vmSize": "Standard_D2_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
+                    },
+                    "fsw": {
+                        "storage": {
+                            "value": {
+                                "name": "[parameters('storage-settings').fsw.accounts[0]]",
+                                "accountType": "[parameters('storage-settings').fsw.accountType]",
+                                "newOrExisting": "[parameters('storage-settings').fsw.newOrExisting]",
+                                "existingRg": "[parameters('storage-settings').fsw.existingRg]"
+                            }
+                        },
+                        "vm": {
+                            "value": {
+                                "name": "fsw-vm",
+                                "adminUserName": "[parameters('vm-settings').adminUserName]",
+                                "adminPassword": "[parameters('vm-settings').adminPassword]",
+                                "avsID": "[resourceId('Microsoft.Compute/availabilitySets', 'sql-avs')]",
+                                "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                                "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                                "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                                "nicName":  "fsw-nic",
+                                "vmSize": "Standard_D2_v2",
+                                "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                            }
+                        }
                     }
                 }
             }
         }
     ],
-    "outputs": {
-    }
+    "outputs": {}
 }
