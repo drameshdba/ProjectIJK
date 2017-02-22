@@ -169,12 +169,12 @@
         "sqlStorageAccountType": {
             "type": "string",
             "allowedValues": [
-                "Premium_LRS"
+                "Standard_LRS"
             ],
             "metadata": {
                 "description": "The type of the Sql Server Storage Account created"
             },
-            "defaultValue": "Premium_LRS"
+            "defaultValue": "Standard_LRS"
         },
         "sqlStorageNewOrExisting": {
             "type": "string",
@@ -465,9 +465,9 @@
             },
             "fsw": {
                 "accounts": [
-                    "[concat(uniquestring(parameters('sqlStorageAccountName0')), 'fsw')]"
+                    "[parameters('sqlStorageAccountName0')]"
                 ],
-                "accountType": "Standard_LRS",
+                "accountType": "[parameters('sqlStorageAccountType')]",
                 "newOrExisting": "[parameters('sqlStorageNewOrExisting')]",
                 "existingRg": "[parameters('sqlStorageExistingResourceGroup')]"
             },
