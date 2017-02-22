@@ -80,7 +80,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage8tza7iv3wymqkef"
+            "defaultValue": "storagegh27iweo1yrbjnl"
         },
         "webStorageAccountType": {
             "type": "string",
@@ -122,7 +122,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage8tza7iv3wymqkef"
+            "defaultValue": "storagegh27iweo1yrbjnl"
         },
         "bizStorageAccountType": {
             "type": "string",
@@ -164,7 +164,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every odd SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage8tza7iv3wymqkef"
+            "defaultValue": "storagegh27iweo1yrbjnl"
         },
         "sqlStorageAccountType": {
             "type": "string",
@@ -206,7 +206,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage8tza7iv3wymqkef"
+            "defaultValue": "storagegh27iweo1yrbjnl"
         },
         "dcStorageAccountType": {
             "type": "string",
