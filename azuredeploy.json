@@ -38,7 +38,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the Management Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'mgmt + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "mgmtz0p6i7hfg8u4kol"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "mgmtStorageAccountType": {
             "type": "string",
@@ -73,14 +73,14 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "web6jwtkaup40y8ld9"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "webStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "web6ab3e2ujtwoxizq"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "webStorageAccountType": {
             "type": "string",
@@ -115,14 +115,14 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "bizsjaw1vfbe3tuno5"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "bizStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "biz297qeliogc35fu8"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "bizStorageAccountType": {
             "type": "string",
@@ -157,14 +157,14 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every even SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "sqlxtslrd7je3fv2gk"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "sqlStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every odd SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "sql21ax7igop3hwfcl"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "sqlStorageAccountType": {
             "type": "string",
@@ -199,14 +199,14 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "dcs2da1mz6n07pbvq"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "dcStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "dcyjxlatm16zv4u7i"
+            "defaultValue": "storage8tza7iv3wymqkef"
         },
         "dcStorageAccountType": {
             "type": "string",
