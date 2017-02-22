@@ -542,7 +542,7 @@
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
             "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
             "count": "[int(parameters('sqlCount'))]",
-            "type": 3
+            "type": 2
         }
     },
     "resources": [
