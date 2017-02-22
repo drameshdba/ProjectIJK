@@ -23,7 +23,8 @@
                 "vm-3tier-poc-1",
                 "vm-dual-poc-1",
                 "vm-3tier-sql-ha-1"
-            ]
+            ],
+            "defaultValue": "vm-3tier-sql-ha-1"
         },
         "publicIPDnsName": {
             "type": "string",
@@ -399,14 +400,16 @@
             "metadata": {
                 "description": "How many Virtual Machine do you want to deploy?"
             },
-            "allowedValues": [ "2", "3", "4", "5" ]
+            "allowedValues": [ "2", "3", "4", "5" ],
+            "defaultValue": "3"
         },
         "sqlCount": {
             "type": "string",
             "metadata": {
                 "description": "How many SQL Virtual Machines do you want to deploy int he Cluster?"
             },
-            "allowedValues": [ "2", "4", "6", "8" ]
+            "allowedValues": [ "2", "4", "6", "8" ],
+            "defaultValue": "2"
         },
         "sqlServerServiceAccountUserName": {
             "type": "string",
