@@ -12,6 +12,17 @@
                 "https://raw.githubusercontent.com/mrptsai/"
             ]
         },
+        "baseBranch": {
+            "type": "string",
+            "metadata": {
+                "description": "Select the appropriate Repository Branch"
+            },
+            "defaultValue": "feature-pattern-3",
+            "allowedValues": [
+                "master",
+                "feature-pattern-3"
+            ]
+        },
         "patternName": {
             "type": "string",
             "metadata": {
@@ -338,19 +349,26 @@
             },
             "defaultValue": "dc"
         },
+        "adDomainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Domain Name for Active Directory"
+            },
+            "defaultValue": "global.anz.com"
+        },
         "adPriIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new AD VM"
             },
-            "defaultValue": "10.1.0.129"
+            "defaultValue": "10.1.0.158"
         },
         "adSecIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new backup AD VM"
             },
-            "defaultValue": "10.1.0.130"
+            "defaultValue": "10.1.0.159"
         },
         "bizLBIPAddress": {
             "type": "string",
@@ -543,6 +561,11 @@
             "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
             "count": "[int(parameters('sqlCount'))]",
             "type": 2
+        },
+        "base-config": {
+            "templates": "[concat(parameters('baseUrl'), 'templates', '/', parameters('baseBranch'))]",
+            "resources": "[concat(parameters('baseUrl'), 'resources', '/', parameters('baseBranch'))]",
+            "dscScripts": "[concat(parameters('baseUrl'), 'dsc-scripts', '/', parameters('baseBranch'))]"
         }
     },
     "resources": [
@@ -579,8 +602,8 @@
                     "dc-settings": {
                         "value": "[variables('dc-settings')]"
                     },
-                    "baseUrl": {
-                        "value": "[parameters('baseUrl')]"
+                    "base-config": {
+                        "value": "[variables('base-config')]"
                     }
                 }
             }
