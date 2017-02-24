@@ -555,11 +555,7 @@
                 "[parameters('adPriIpAddress')]",
                 "[parameters('adSecIpAddress')]"
             ],
-            "dsc": [
-                [ "CreateADPDC" ],
-                [ "CreateADBDC" ]
-            ]
-
+            "dsc": ["CreateADPDC", "CreateADBDC" ]
         },
         "sql-settings": {
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
