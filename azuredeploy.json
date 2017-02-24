@@ -552,17 +552,17 @@
         "dc-settings": {
             "domainName": "[parameters('adDomainName')]",
             "ipAddresses": [
-                [ "[parameters('adPriIpAddress')]" ],
-                [ "[parameters('adSecIpAddress')]" ]
+                "[parameters('adPriIpAddress')]",
+                "[parameters('adSecIpAddress')]"
             ],
             "modules": [
                 [
-                    [ "CreateADPDC.ps1.zip" ],
-                    [ "CreateADPDC.ps1\\CreateADPDC" ]
+                    "CreateADPDC.ps1.zip",
+                    "CreateADPDC.ps1\\CreateADPDC"
                 ],
                 [
-                    [ "CreateADBDC.ps1.zip" ],
-                    [ "CreateADBDC.ps1\\CreateADBDC" ]
+                    "CreateADBDC.ps1.zip",
+                    "CreateADBDC.ps1\\CreateADBDC"
                 ]
             ]
 
