@@ -555,15 +555,9 @@
                 "[parameters('adPriIpAddress')]",
                 "[parameters('adSecIpAddress')]"
             ],
-            "modules": [
-                [
-                    "CreateADPDC.ps1.zip",
-                    "CreateADPDC.ps1\\CreateADPDC"
-                ],
-                [
-                    "CreateADBDC.ps1.zip",
-                    "CreateADBDC.ps1\\CreateADBDC"
-                ]
+            "dsc": [
+                [ "CreateADPDC" ],
+                [ "CreateADBDC" ]
             ]
 
         },
