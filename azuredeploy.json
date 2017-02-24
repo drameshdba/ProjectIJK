@@ -551,7 +551,7 @@
         },
         "dc-settings": {
             "domainName": "[parameters('adDomainName')]",
-            "ipAddesses": [
+            "ipAddresses": [
                 [ "[parameters('adPriIpAddress')]" ],
                 [ "[parameters('adSecIpAddress')]" ]
             ],
