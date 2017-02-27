@@ -252,7 +252,7 @@
             "metadata": {
                 "description": "Enter a Name for a Virtual Network or specify the name of an existing Virtual Network."
             },
-            "defaultValue": "[concat('vnet-', resourceGroup().name)]"
+            "defaultValue": "vnet-ProjectIJK"
         },
         "virtualNetworkNewOrExisting": {
             "type": "string",
