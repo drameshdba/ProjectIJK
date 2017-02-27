@@ -252,7 +252,7 @@
             "metadata": {
                 "description": "Enter a Name for a Virtual Network or specify the name of an existing Virtual Network."
             },
-            "defaultValue": "vnet-2"
+            "defaultValue": "[concat('vnet-', resourceGroup().name)]"
         },
         "virtualNetworkNewOrExisting": {
             "type": "string",
@@ -263,28 +263,28 @@
                 "new",
                 "existing"
             ],
-            "defaultValue": "existing"
+            "defaultValue": "new"
         },
         "virtualNetworkExistingResourceGroup": {
             "type": "string",
             "metadata": {
                 "description": "Specifiy the existing Virtual Network Resource Group. Leave blank if creating a new Virtual Network"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": ""
         },
         "virtualNetworkPrefix": {
             "type": "string",
             "metadata": {
                 "description": "Specify the Virtual Network Prefix to create or to be used"
             },
-            "defaultValue": "10.1.0.0/16"
+            "defaultValue": "11.1.0.0/16"
         },
         "subnet0Prefix": {
             "type": "string",
             "metadata": {
                 "description": "Specify the the Subnet Prefix for the Management Tier"
             },
-            "defaultValue": "10.1.0.0/27"
+            "defaultValue": "11.1.0.0/27"
         },
         "subnet0Name": {
             "type": "string",
@@ -298,7 +298,7 @@
             "metadata": {
                 "description": "Specify the the Subnet Prefix for the Web Tier"
             },
-            "defaultValue": "10.1.0.32/27"
+            "defaultValue": "11.1.0.32/27"
         },
         "subnet1Name": {
             "type": "string",
@@ -312,7 +312,7 @@
             "metadata": {
                 "description": "Specify the the Subnet Prefix for the Biz Tier"
             },
-            "defaultValue": "10.1.0.64/27"
+            "defaultValue": "11.1.0.64/27"
         },
         "subnet2Name": {
             "type": "string",
@@ -326,7 +326,7 @@
             "metadata": {
                 "description": "Specify the Subnet Prefix for the SQL Tier"
             },
-            "defaultValue": "10.1.0.96/27"
+            "defaultValue": "11.1.0.96/27"
         },
         "subnet3Name": {
             "type": "string",
@@ -340,7 +340,7 @@
             "metadata": {
                 "description": "Specify the Subnet Prefix for the DC Tier"
             },
-            "defaultValue": "10.1.0.128/27"
+            "defaultValue": "11.1.0.128/27"
         },
         "subnet4Name": {
             "type": "string",
@@ -361,21 +361,21 @@
             "metadata": {
                 "description": "The IP address of the new AD VM"
             },
-            "defaultValue": "10.1.0.157"
+            "defaultValue": "11.1.0.157"
         },
         "adSecIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new backup AD VM"
             },
-            "defaultValue": "10.1.0.158"
+            "defaultValue": "11.1.0.158"
         },
         "bizLBIPAddress": {
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new Biz Tier Internal Load Balancer"
             },
-            "defaultValue": "10.1.0.94"
+            "defaultValue": "11.1.0.94"
         },
         "bizPort": {
             "type": "int",
@@ -389,7 +389,7 @@
             "metadata": {
                 "description": "The IP address of the new SQL Tier Internal Load Balancer"
             },
-            "defaultValue": "10.1.0.126"
+            "defaultValue": "11.1.0.126"
         },
         "sqlPort": {
             "type": "int",
