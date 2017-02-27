@@ -546,7 +546,9 @@
             "adminUserName": "[parameters('vmAdminUserName')]",
             "adminPassword": "[parameters('vmAdminPassword')]",
             "count": "[int(parameters('vmCount'))]",
-            "type": 0
+            "type": 0,
+            "webDsc": "iis-config-dsc",
+            "webDscFolder": "iis-on-windows-vm"
 
         },
         "dc-settings": {
@@ -555,7 +557,8 @@
                 "[parameters('adPriIpAddress')]",
                 "[parameters('adSecIpAddress')]"
             ],
-            "dsc": ["CreateADPDC", "CreateADBDC" ]
+            "dsc": [ "CreateADPDC", "CreateADBDC" ],
+            "dscFolder": "active-directory"
         },
         "sql-settings": {
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
