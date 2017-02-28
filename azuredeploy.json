@@ -548,7 +548,8 @@
             "count": "[int(parameters('vmCount'))]",
             "type": 0,
             "webDsc": "iis-config-dsc",
-            "webDscFolder": "iis-on-windows-vm"
+            "webDscFolder": "iis-on-windows-vm",
+            "webDscFunction": "Main"
 
         },
         "dc-settings": {
@@ -558,7 +559,8 @@
                 "[parameters('adSecIpAddress')]"
             ],
             "dsc": [ "CreateADPDC", "CreateADBDC" ],
-            "dscFolder": "active-directory"
+            "dscFolder": "active-directory",
+            "dscFunction": [ "CreateADPDC", "CreateADBDC" ]
         },
         "sql-settings": {
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
