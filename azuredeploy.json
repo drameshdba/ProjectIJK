@@ -547,7 +547,7 @@
             "adminPassword": "[parameters('vmAdminPassword')]",
             "count": "[int(parameters('vmCount'))]",
             "type": 0,
-            "webDsc": "iis-config-dsc",
+            "webDscFile": "iis-config-dsc",
             "webDscFolder": "iis-on-windows-vm",
             "webDscFunction": "Main"
 
@@ -558,7 +558,7 @@
                 "[parameters('adPriIpAddress')]",
                 "[parameters('adSecIpAddress')]"
             ],
-            "dsc": [ "CreateADPDC", "CreateADBDC" ],
+            "dscFile": [ "CreateADPDC", "CreateADBDC" ],
             "dscFolder": "active-directory",
             "dscFunction": [ "CreateADPDC", "CreateADBDC" ]
         },
