@@ -546,21 +546,14 @@
             "adminUserName": "[parameters('vmAdminUserName')]",
             "adminPassword": "[parameters('vmAdminPassword')]",
             "count": "[int(parameters('vmCount'))]",
-            "type": 0,
-            "webDscFile": "iis-config-dsc",
-            "webDscFolder": "iis-on-windows-vm",
-            "webDscFunction": "Main"
-
+            "type": 0
         },
         "dc-settings": {
             "domainName": "[parameters('adDomainName')]",
             "ipAddresses": [
                 "[parameters('adPriIpAddress')]",
                 "[parameters('adSecIpAddress')]"
-            ],
-            "dscFile": [ "CreateADPDC", "CreateADBDC" ],
-            "dscFolder": "active-directory",
-            "dscFunction": [ "CreateADPDC", "CreateADBDC" ]
+            ]            
         },
         "sql-settings": {
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
