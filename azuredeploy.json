@@ -362,7 +362,14 @@
                 "description": "The IP address of the new AD VM"
             },
             "defaultValue": "11.1.0.157"
-        },        
+        },
+        "adSecIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new backup AD VM"
+            },
+            "defaultValue": "11.1.0.158"
+        },
         "bizLBIPAddress": {
             "type": "string",
             "metadata": {
@@ -544,7 +551,8 @@
         "dc-settings": {
             "domainName": "[parameters('adDomainName')]",
             "ipAddresses": [
-                "[parameters('adPriIpAddress')]"
+                "[parameters('adPriIpAddress')]",
+                "[parameters('adSecIpAddress')]"
             ]            
         },
         "sql-settings": {
