@@ -483,6 +483,19 @@
             },
             "defaultValue": "Windows@2016"
         },
+        "numberOfSqlVMDisks": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2",
+                "3",
+                "4"
+            ],
+            "metadata": {
+                "description": "The Sql VM Disk Size"
+            },
+            "defaultValue": "2"
+        },
         "autoPatchingDay": {
             "type": "string",
             "allowedValues": [
@@ -660,16 +673,17 @@
         },
         "sql-settings": {
             "aoGroupName": "[parameters('sqlAOAGName')]",
+            "aoEndPointName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
             "aoListenerName": "[parameters('sqlAOListenerName')]",
             "aoListenerPort": "[parameters('sqlAOListenerPort')]",
             "autoPatchingDay": "[parameters('autoPatchingDay')]",
             "autoPatchingStartHour": "[parameters('autoPatchingStartHour')]",
             "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
             "count": "[int(parameters('sqlCount'))]",
+            "numberOfSqlVMDisks": "[parameters('numberOfSqlVMDisks')]",
             "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
             "sharePath": "[concat(parameters('deploymentPrefix'),'-fsw')]",
-            "sqlAOEPName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
             "type": 2,
             "workload": "[parameters('sqlWorkloadType')]"
         },
