@@ -664,7 +664,6 @@
             "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
             "count": "[int(parameters('sqlCount'))]",
             "numberOfSqlDisks": "[parameters('sqlNumberOfDisks')]",
-            "protectedSettings": null,
             "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
             "serviceAccountUserName": "[parameters('sqlServerServiceAccountUserName')]",
             "sharePath": "[concat(parameters('deploymentPrefix'),'-fsw')]",
