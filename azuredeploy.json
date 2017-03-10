@@ -385,11 +385,11 @@
             "defaultValue": "11.1.0.94"
         },
         "bizPort": {
-            "type": "int",
+            "type": "string",
             "metadata": {
                 "description": "The Port Number for the Applicatin on the Business Tier"
             },
-            "defaultValue": 1234
+            "defaultValue": "1234"
         },
         "sqlAOAGName": {
             "type": "string",
@@ -485,11 +485,11 @@
             "defaultValue": "1"
         },
         "sqlPort": {
-            "type": "int",
+            "type": "string",
             "metadata": {
                 "description": "The Port number used by SQL"
             },
-            "defaultValue": 49168
+            "defaultValue": "49168"
         },
 
         "sqlServerServiceAccountUserName": {
@@ -634,11 +634,11 @@
             "dnsName": "[parameters('publicIPDnsName')]",
             "biz": {
                 "ipAddress": "[parameters('bizLBIPAddress')]",
-                "internalPorts": "[parameters('bizPort')]"
+                "internalPorts": "[int(parameters('bizPort'))]"
             },
             "sql": {
                 "ipAddress": "[parameters('sqlLBIPAddress')]",
-                "internalPorts": "[parameters('sqlPort')]"
+                "internalPorts": "[int(parameters('sqlPort'))]"
             }
         },
         "vm-settings": {
@@ -658,7 +658,7 @@
             "aoGroupName": "[parameters('sqlAOAGName')]",
             "aoEndPointName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
             "aoListenerName": "[parameters('sqlAOListenerName')]",
-            "aoListenerPort": "[parameters('sqlPort')]",
+            "aoListenerPort": "[int(parameters('sqlPort'))]",
             "autoPatchingDay": "[parameters('sqlAutoPatchingDay')]",
             "autoPatchingStartHour": "[parameters('sqlAutoPatchingStartHour')]",
             "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
