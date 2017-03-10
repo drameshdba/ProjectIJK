@@ -482,7 +482,7 @@
             "metadata": {
                 "description": "The Sql VM Disk Size"
             },
-            "defaultValue": "2"
+            "defaultValue": "1"
         },
         "sqlPort": {
             "type": "int",
