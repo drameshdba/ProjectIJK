@@ -56,7 +56,7 @@
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the Management Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'mgmt + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage423ff3fsda3"
+            "defaultValue": "storagepfzm5d71teqv29c"
         },
         "mgmtStorageAccountType": {
             "type": "string",
@@ -84,21 +84,21 @@
             "metadata": {
                 "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": "TEST-PT"
         },
         "webStorageAccountName0": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage423ff3fsda3"
+            "defaultValue": "storagepfzm5d71teqv29c"
         },
         "webStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Web Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'web + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storagefjrj423qqds4"
+            "defaultValue": "storagevxhk8yngs3i0mur"
         },
         "webStorageAccountType": {
             "type": "string",
@@ -126,21 +126,21 @@
             "metadata": {
                 "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": "TEST-PT"
         },
         "bizStorageAccountName0": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage423ff3fsda3"
+            "defaultValue": "storagepfzm5d71teqv29c"
         },
         "bizStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Business Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'biz + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storagefjrj423qqds4"
+            "defaultValue": "storagevxhk8yngs3i0mur"
         },
         "bizStorageAccountType": {
             "type": "string",
@@ -168,21 +168,21 @@
             "metadata": {
                 "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": "TEST-PT"
         },
         "sqlStorageAccountName0": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every even SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage423ff3fsda3"
+            "defaultValue": "storagepfzm5d71teqv29c"
         },
         "sqlStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for the every odd SQL Tier Server. Use PowerShell and the following command to generate a unique Storage Account Name 'sql + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storagefjrj423qqds4"
+            "defaultValue": "storagevxhk8yngs3i0mur"
         },
         "sqlStorageAccountType": {
             "type": "string",
@@ -210,21 +210,21 @@
             "metadata": {
                 "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": "TEST-PT"
         },
         "dcStorageAccountName0": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every even Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storage423ff3fsda3"
+            "defaultValue": "storagepfzm5d71teqv29c"
         },
         "dcStorageAccountName1": {
             "type": "string",
             "metadata": {
                 "description": "Enter a unique Name for a new Storage Account or specify the name of an existing Storage Account for every odd Domain Controller. Use PowerShell and the following command to generate a unique Storage Account Name 'dc + (-join ((48..57) + (97..122) | Get-Random -Count 15 | % {[char]$_}))'"
             },
-            "defaultValue": "storagefjrj423qqds4"
+            "defaultValue": "storagevxhk8yngs3i0mur"
         },
         "dcStorageAccountType": {
             "type": "string",
@@ -252,7 +252,7 @@
             "metadata": {
                 "description": "Specifiy the existing Storage Resource Group. Leave blank if creating a new Storage Account"
             },
-            "defaultValue": "TEST-Melbourne"
+            "defaultValue": "TEST-PT"
         },
         "virtualNetworkName": {
             "type": "string",
