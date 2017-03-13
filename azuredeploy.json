@@ -391,6 +391,13 @@
             },
             "defaultValue": "1234"
         },
+        "clusterIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the cluster"
+            },
+            "defaultValue": "11.1.0.126"
+        },
         "sqlAOAGName": {
             "type": "string",
             "metadata": {
@@ -662,6 +669,7 @@
             "autoPatchingDay": "[parameters('sqlAutoPatchingDay')]",
             "autoPatchingStartHour": "[parameters('sqlAutoPatchingStartHour')]",
             "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
+            "clusterIPAddress": "[parameters('clusterIPAddress')]",
             "count": "[int(parameters('sqlCount'))]",
             "numberOfSqlDisks": "[parameters('sqlNumberOfDisks')]",
             "serviceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
