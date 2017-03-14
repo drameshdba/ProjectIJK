@@ -7,9 +7,9 @@
             "metadata": {
                 "description": "Select the appropriate Repository Base URL containing Pattern Templates and Resource Templates"
             },
-            "defaultValue": "https://raw.githubusercontent.com/mrptsai/ProjectIJK/",
+            "defaultValue": "https://raw.githubusercontent.com/mrptsai/",
             "allowedValues": [
-                "https://raw.githubusercontent.com/mrptsai/ProjectIJK/"
+                "https://raw.githubusercontent.com/mrptsai/"
             ]
         },
         "baseBranch": {
@@ -551,7 +551,7 @@
         }
     },
     "variables": {
-        "templatesFolder": "templates",
+        "templatesFolder": "templates/feature-pattern-3",
         "templateUrl": "[concat(parameters('baseUrl'), variables('templatesFolder'), '/', parameters('patternName'), '.json')]",
         "storage-settings": {
             "mgmt": {
@@ -679,9 +679,9 @@
             "workload": "[parameters('sqlWorkloadType')]"
         },
         "base-config": {
-            "templates": "[concat(parameters('baseUrl'), parameters('baseBranch'), 'templates')]",
-            "resources": "[concat(parameters('baseUrl'), parameters('baseBranch'), 'resources')]",
-            "dscScripts": "[concat(parameters('baseUrl'), parameters('baseBranch'), 'dsc-scripts')]"
+            "templates": "[concat(parameters('baseUrl'), 'templates', '/', parameters('baseBranch'))]",
+            "resources": "[concat(parameters('baseUrl'), 'resources', '/', parameters('baseBranch'))]",
+            "dscScripts": "[concat(parameters('baseUrl'), 'dsc-scripts', '/', parameters('baseBranch'))]"
         }
     },
     "resources": [
