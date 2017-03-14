@@ -1,0 +1,317 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lb-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the load balancers"
+            }
+        },
+        "inboundNat-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Inbound NAT Rules"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "resourcesUrl": "[parameters('base-config').resources]",
+        "lbTemplate": "[concat(variables('resourcesUrl'), '/', 'lb.template.json')]",
+        "inboundNatTemplate": "[concat(variables('resourcesUrl'), '/', 'inbound-nat.template.json')]",
+        "extLbBackendPoolID": "[concat(variables('extLbID'),'/backendAddressPools/', variables('extLbBackendPoolName'))]",
+        "extLbBackendPoolName": "[parameters('lb-settings').ext.backendPoolName]",
+        "extLbBackendPort": "[parameters('lb-settings').ext.backendPort]",
+        "extLbFrontendPoolID": "[concat(variables('extLbID'),'/frontendIPConfigurations/lb-frontEnd')]",
+        "extLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('extLbName'))]",
+        "extLbName": "[parameters('lb-settings').ext.name]",
+        "extLbProbeID": "[concat(variables('extLbID'),'/probes/', variables('extLbProbeName'))]",
+        "extLbProbeName": "[parameters('lb-settings').ext.probeName]",
+        "extLbRuleName": "[parameters('lb-settings').ext.ruleName]",
+        "bizLbBackendPoolID": "[concat(variables('bizLbID'),'/backendAddressPools/', variables('bizLbBackendPoolName'))]",
+        "bizLbBackendPoolName": "[parameters('lb-settings').biz.backendPoolName]",
+        "bizLbFrontendIP": "[parameters('lb-settings').biz.ipAddress]",
+        "bizLbFrontendPoolID": "[concat(variables('bizLbID'),'/frontendIPConfigurations/lb-frontEnd')]",
+        "bizLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('bizLbName'))]",
+        "bizLbName": "[parameters('lb-settings').biz.name]",
+        "bizLbPort": "[parameters('lb-settings').biz.internalPorts]",
+        "bizLbProbeID": "[concat(variables('bizLbID'),'/probes/', variables('bizLbProbeName'))]",
+        "bizLbProbeName": "[parameters('lb-settings').biz.probeName]",
+        "bizLbRuleName": "[parameters('lb-settings').biz.ruleName]",
+        "sqlLbBackendPoolID": "[concat(variables('sqlLbID'),'/backendAddressPools/', variables('sqlLbBackendPoolName'))]",
+        "sqlLbBackendPoolName": "[parameters('lb-settings').sql.backendPoolName]",
+        "sqlLbFrontendIP": "[parameters('lb-settings').sql.ipAddress]",
+        "sqlLbFrontendPoolID": "[concat(variables('sqlLbID'),'/frontendIPConfigurations/lb-frontEnd')]",
+        "sqlLbID": "[resourceId('Microsoft.Network/loadBalancers', variables('sqlLbName'))]",
+        "sqlLbName": "[parameters('lb-settings').sql.name]",
+        "sqlLbPort": "[parameters('lb-settings').sql.internalPorts]",
+        "sqlLbProbeID": "[concat(variables('sqlLbID'),'/probes/', variables('sqlLbProbeName'))]",
+        "sqlLbProbeName": "[parameters('lb-settings').sql.probeName]",
+        "sqlLbRuleName": "[parameters('lb-settings').sql.ruleName]"
+    },
+    "resources": [
+        {
+            "name": "externalLoadBalancer",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lbTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "lb-settings": {
+                        "value": {
+                            "name": "[variables('extLbName')]",
+                            "count": "[parameters('lb-settings').vmCount]",
+                            "backendPort": "[variables('extLbBackendPort')]",
+                            "frontendIPConfigurations": [
+                                {
+                                    "name": "lb-frontEnd",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "publicIPAddress": {
+                                            "id": "[parameters('lb-settings').ext.pipID]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "backendAddressPools": [
+                                {
+                                    "name": "[variables('extLbBackendPoolName')]"
+                                }
+                            ],
+                            "loadBalancingRules": [
+                                {
+                                    "name": "[variables('extLbRuleName')]",
+                                    "properties": {
+                                        "frontendIPConfiguration": {
+                                            "id": "[variables('extLbFrontendPoolID')]"
+                                        },
+                                        "frontendPort": 80,
+                                        "backendPort": 80,
+                                        "enableFloatingIP": false,
+                                        "idleTimeoutInMinutes": 4,
+                                        "protocol": "Tcp",
+                                        "loadDistribution": "SourceIPProtocol",
+                                        "backendAddressPool": {
+                                            "id": "[variables('extLbBackendPoolID')]"
+                                        },
+                                        "probe": {
+                                            "id": "[variables('extLbProbeID')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "probes": [
+                                {
+                                    "name": "[variables('extLbProbeName')]",
+                                    "properties": {
+                                        "protocol": "Http",
+                                        "port": 80,
+                                        "requestPath": "/",
+                                        "intervalInSeconds": 5,
+                                        "numberOfProbes": 2
+                                    }
+                                }
+                            ],
+                            "inboundNatRules": [],
+                            "outboundNatRules": [],
+                            "inboundNatPools": []
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "externalInboundNatRules",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'externalLoadBalancer')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('inboundNatTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "inboundNat-settings": {
+                        "value": {
+                            "name": "[parameters('inboundNat-settings').ext.name]",
+                            "count": "[parameters('inboundNat-settings').ext.count]",
+                            "backendPort": "[parameters('inboundNat-settings').ext.backendPort]",
+                            "frontendPoolID": "[parameters('inboundNat-settings').ext.frontendPoolID]",
+                            "frontendPort": "[parameters('inboundNat-settings').ext.frontendPort]",
+                            "protocol": "[parameters('inboundNat-settings').ext.protocol]",
+                            "floatingIP": "[parameters('inboundNat-settings').ext.floatingIP]"
+                        }    
+                    }
+                }
+            }
+        },
+        {
+            "name": "bizLoadBalancer",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lbTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "lb-settings": {
+                        "value": {
+                            "name": "[variables('bizLbName')]",
+                            "count": "[parameters('lb-settings').vmCount]",
+                            "backendPort": "[variables('bizLbPort')]",
+                            "frontendIPConfigurations": [
+                                {
+                                    "name": "lb-frontEnd",
+                                    "properties": {
+                                        "privateIPAddress": "[variables('bizLbFrontendIP')]",
+                                        "privateIPAllocationMethod": "static",
+                                        "subnet": {
+                                            "id": "[parameters('lb-settings').biz.subnet]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "backendAddressPools": [
+                                {
+                                    "name": "[variables('bizLbBackendPoolName')]"
+                                }
+                            ],
+                            "loadBalancingRules": [
+                                {
+                                    "name": "[variables('bizLbRuleName')]",
+                                    "properties": {
+                                        "frontendIPConfiguration": {
+                                            "id": "[variables('bizLbFrontendPoolID')]"
+                                        },
+                                        "frontendPort": "[variables('bizLbPort')]",
+                                        "backendPort": "[variables('bizLbPort')]",
+                                        "enableFloatingIP": false,
+                                        "idleTimeoutInMinutes": 4,
+                                        "protocol": "Tcp",
+                                        "loadDistribution": "SourceIPProtocol",
+                                        "backendAddressPool": {
+                                            "id": "[variables('bizLbBackendPoolID')]"
+                                        },
+                                        "probe": {
+                                            "id": "[variables('bizLbProbeID')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "probes": [
+                                {
+                                    "name": "[variables('bizLbProbeName')]",
+                                    "properties": {
+                                        "protocol": "Tcp",
+                                        "port": "[variables('bizLbPort')]",
+                                        "intervalInSeconds": 5,
+                                        "numberOfProbes": 2
+                                    }
+                                }
+                            ],
+                            "inboundNatRules": [],
+                            "outboundNatRules": [],
+                            "inboundNatPools": []
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sqlLoadBalancer",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lbTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "lb-settings": {
+                        "value": {
+                            "name": "[variables('sqlLbName')]",
+                            "count": "[parameters('lb-settings').sqlCount]",
+                            "backendPort": "[variables('sqlLbPort')]",
+                            "frontendIPConfigurations": [
+                                {
+                                    "name": "lb-frontEnd",
+                                    "properties": {
+                                        "privateIPAddress": "[variables('sqlLbFrontendIP')]",
+                                        "privateIPAllocationMethod": "static",
+                                        "subnet": {
+                                            "id": "[parameters('lb-settings').sql.subnet]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "backendAddressPools": [
+                                {
+                                    "name": "[variables('sqlLbBackendPoolName')]"
+                                }
+                            ],
+                            "loadBalancingRules": [
+                                {
+                                    "name": "[variables('sqlLbRuleName')]",
+                                    "properties": {
+                                        "frontendIPConfiguration": {
+                                            "id": "[variables('sqlLbFrontendPoolID')]"
+                                        },
+                                        "frontendPort": "[variables('bizLbPort')]",
+                                        "backendPort": "[variables('bizLbPort')]",
+                                        "enableFloatingIP": true,
+                                        "idleTimeoutInMinutes": 4,
+                                        "protocol": "Tcp",
+                                        "loadDistribution": "SourceIPProtocol",
+                                        "backendAddressPool": {
+                                            "id": "[variables('sqlLbBackendPoolID')]"
+                                        },
+                                        "probe": {
+                                            "id": "[variables('sqlLbProbeID')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "probes": [
+                                {
+                                    "name": "[variables('sqlLbProbeName')]",
+                                    "properties": {
+                                        "protocol": "Tcp",
+                                        "port": "[variables('sqlLbPort')]",
+                                        "intervalInSeconds": 5,
+                                        "numberOfProbes": 2
+                                    }
+                                }
+                            ],
+                            "inboundNatRules": [],
+                            "outboundNatRules": [],
+                            "inboundNatPools": []
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

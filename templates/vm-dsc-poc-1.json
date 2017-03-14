@@ -1,0 +1,230 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
+            }
+        },
+        "vnet-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Network"
+            }
+        },
+        "vm-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Machine"
+            }
+        },
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Base URL for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "dscScriptsFolder": "dsc-scripts/master",
+        "dscScriptsUrl": "[concat(parameters('baseUrl'), variables('dscScriptsFolder'))]",
+        "dscTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-dsc.template.json')]",
+        "scriptTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-script.template.json')]",
+        "resourcesFolder": "resources/master",
+        "resourcesUrl": "[concat(parameters('baseUrl'), variables('resourcesFolder'))]",
+        "sharedTemplate": "[concat(variables('resourcesUrl'), '/', 'shared-resources.json')]",
+        "avsName": "vm-avs",
+        "math": {
+            "modulo2": [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+            "modulo3": [ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ]
+        },
+        "nicNamePrefix": "vm-nic-",
+        "nicTemplate": "[concat(variables('resourcesUrl'), '/', 'nic.template.json')]",
+        "vmCount": "[parameters('vm-settings').count]",
+        "vmNamePrefix": "vm-",
+        "vmOS": [
+            [ "MicrosoftWindowsServer", "WindowsServer", "2016-Datacenter", "windows" ],
+            [ "Canonical", "UbuntuServer", "16.04-LTS", "linux" ]
+        ],
+        "vmDscScript": [
+            [ "dsc-iis", "Microsoft.Powershell", "DSC", "2.9", "[variables('dscTemplate')]", "[variables('dscScriptsUrl')]", "iis-on-windows-vm", "iis-config-dsc", "Main" ],
+            [ "script-apache", "Microsoft.Azure.Extensions", "CustomScript", "2.0", "[variables('scriptTemplate')]", "[variables('dscScriptsUrl')]", "apache2-on-ubuntu-vm", "install_apache.sh", null ]
+        ],
+        "vmTemplate": "[concat(variables('resourcesUrl'), '/vm-', variables('vmOS')[parameters('vm-settings').type][3], '.template.json')]"
+    },
+    "resources": [
+        {
+            "name": "shared-resources",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sharedTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "accounts": "[parameters('storage-settings').accounts]",
+                            "count": "[length(parameters('storage-settings').accounts)]",
+                            "accountType": "Standard_LRS",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vnet-settings": {
+                        "value": {
+                            "name": "[parameters('vnet-settings').name]",
+                            "newOrExisting": "[parameters('vnet-settings').newOrExisting]",
+                            "existingRg": "[parameters('vnet-settings').existingRg]",
+                            "prefix": "[parameters('vnet-settings').prefix]",
+                            "subnets": [
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet0Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]"
+                                    }
+                                }
+                            ],
+                            "dnsSettings": []
+                        }
+                    },
+                    "avs-settings": {
+                        "value": {
+                            "name": "[variables('avsName')]",
+                            "updateCount": 5,
+                            "faultCount": 3
+                        }
+                    },
+                    "resourcesUrl": {
+                        "value": "[variables('resourcesUrl')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('network-interface-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'shared-resources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(variables('nicNamePrefix'), copyindex())]",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "subnet": {
+                                            "id": "[concat(reference('shared-resources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet0Name)]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "dnsSettings": {
+                                "dnsServers": []
+                            },
+                            "enableIPForwarding": false,
+                            "networkSecurityGroup": null
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('virtual-machine-', copyindex())]",
+            "copy": {
+                "name": "vmLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'shared-resources')]",
+                "[resourceId('Microsoft.Resources/deployments', concat('network-interface-', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').accounts[variables('math').modulo2[copyIndex()]]]",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(variables('vmNamePrefix'), copyindex())]",
+                            "adminUserName": "[parameters('vm-settings').adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').adminPassword]",
+                            "avsID": "[reference('shared-resources').outputs.avsID.value]",
+                            "imagePublisher": "[variables('vmOS')[parameters('vm-settings').type][0]]",
+                            "imageOffer": "[variables('vmOS')[parameters('vm-settings').type][1]]",
+                            "imageSku": "[variables('vmOS')[parameters('vm-settings').type][2]]",
+                            "nicID": "[reference(concat('network-interface-', copyindex())).outputs.nicID.value]",
+                            "vmSize": "Standard_D2_v2",
+                            "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('dscScript-extension', copyindex())]",
+            "copy": {
+                "name": "dscScriptLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat('virtual-machine-', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmDscScript')[parameters('vm-settings').type][4]]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "extn-settings": {
+                        "value": {
+                            "name": "[variables('vmDscScript')[parameters('vm-settings').type][0]]",
+                            "publisher": "[variables('vmDscScript')[parameters('vm-settings').type][1]]",
+                            "type": "[variables('vmDscScript')[parameters('vm-settings').type][2]]",
+                            "typeHandlerVersion": "[variables('vmDscScript')[parameters('vm-settings').type][3]]",
+                            "vmName": "[concat(variables('vmNamePrefix'), copyindex())]",
+                            "url": "[variables('vmDscScript')[parameters('vm-settings').type][5]]",
+                            "folder": "[variables('vmDscScript')[parameters('vm-settings').type][6]]",
+                            "file": "[variables('vmDscScript')[parameters('vm-settings').type][7]]",
+                            "function": "[variables('vmDscScript')[parameters('vm-settings').type][8]]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

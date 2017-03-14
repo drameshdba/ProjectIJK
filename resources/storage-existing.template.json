@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+    ],
+    "outputs": {
+        "storageAccountId": {
+            "value": "[resourceId(parameters('storage-settings').existingRg,'Microsoft.Storage/StorageAccounts',parameters('storage-settings').name)]",
+            "type": "string"
+        }
+    }
+}

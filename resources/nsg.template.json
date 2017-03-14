@@ -1,0 +1,32 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsg-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for a Network Security Group"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('nsg-settings').name]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "[parameters('nsg-settings').name]"
+            },
+            "properties": {
+                "securityRules": "[parameters('nsg-settings').securityRules]"
+            },
+            "resources": []
+        }
+    ],
+    "outputs": {
+    }
+}

@@ -1,0 +1,786 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
+            }
+        },
+        "vnet-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Network"
+            }
+        },
+        "pip-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Public IP Address"
+            }
+        },
+        "vm-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Machine"
+            }
+        },
+        "baseUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Base URL for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "dscScriptsFolder": "dsc-scripts/master",
+        "resourcesFolder": "resources/master",
+        "dscScriptsUrl": "[concat(parameters('baseUrl'), variables('dscScriptsFolder'))]",
+        "resourcesUrl": "[concat(parameters('baseUrl'), variables('resourcesFolder'))]",
+        "dscTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-dsc.template.json')]",
+        "nicTemplate": "[concat(variables('resourcesUrl'), '/', 'nic.template.json')]",
+        "nsgTemplate": "[concat(variables('resourcesUrl'), '/', 'nsg.template.json')]",
+        "pipTemplate": "[concat(variables('resourcesUrl'), '/pip-', parameters('pip-settings').newOrExisting, '.template.json')]",
+        "scriptTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-script.template.json')]",
+        "sharedTemplate": "[concat(variables('resourcesUrl'), '/', 'shared-resources.json')]",
+        "vmTemplate": "[concat(variables('resourcesUrl'), '/vm-windows.template.json')]",
+        "vmCount": 1,
+        "vmImagePublisher": "MicrosoftWindowsServer",
+        "vmImageOffer": "WindowsServer",
+        "vmImageSku": "2016-Datacenter"
+    },
+    "resources": [
+        {
+            "name": "sharedResources",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sharedTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "accounts": "[parameters('storage-settings').accounts]",
+                            "count": "[length(parameters('storage-settings').accounts)]",
+                            "accountType": "Standard_LRS",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vnet-settings": {
+                        "value": {
+                            "name": "[parameters('vnet-settings').name]",
+                            "newOrExisting": "[parameters('vnet-settings').newOrExisting]",
+                            "existingRg": "[parameters('vnet-settings').existingRg]",
+                            "prefix": "[parameters('vnet-settings').prefix]",
+                            "subnets": [
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet0Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet1Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet1Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet2Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet2Prefix]"
+                                    }
+                                },
+                                {
+                                    "name": "[parameters('vnet-settings').subnets.subnet3Name]",
+                                    "properties": {
+                                        "addressPrefix": "[parameters('vnet-settings').subnets.subnet3Prefix]"
+                                    }
+                                }
+                            ],
+                            "dnsSettings": []
+                        }
+                    },
+                    "avs-settings": {
+                        "value": {
+                            "name": "3tier-avs",
+                            "updateCount": 5,
+                            "faultCount": 3
+                        }
+                    },
+                    "resourcesUrl": {
+                        "value": "[variables('resourcesUrl')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "publicIp",
+            "copy": {
+                "name": "pipLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('pipTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "pip-settings": {
+                        "value": {
+                            "name": "mgmt-jb-pip",
+                            "publicIPAllocationMethod": "Dynamic",
+                            "dnsName": "[parameters('pip-settings').dnsName]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "mgmtJbNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": {
+                            "name": "mgmt-jb-nsg",
+                            "securityRules": [
+                                {
+                                    "name": "rdp-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                        "destinationPortRange": "3389",
+                                        "access": "Allow",
+                                        "priority": 100
+                                    }
+                                },
+                                {
+                                    "name": "vnet-deny",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "*",
+                                        "access": "Deny",
+                                        "priority": 200
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "webNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": {
+                            "name": "web-nsg",
+                            "securityRules": [
+                                {
+                                    "name": "http-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                        "destinationPortRange": "80",
+                                        "access": "Allow",
+                                        "priority": 100
+                                    }
+                                },
+                                {
+                                    "name": "vnet-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "80",
+                                        "access": "Allow",
+                                        "priority": 200
+                                    }
+                                },
+                                {
+                                    "name": "rdp-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "3389",
+                                        "access": "Allow",
+                                        "priority": 300
+                                    }
+                                },
+                                {
+                                    "name": "vnet-deny",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "*",
+                                        "access": "Deny",
+                                        "priority": 400
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "bizNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": {
+                            "name": "biz-nsg",
+                            "securityRules": [
+                                {
+                                    "name": "web-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet1Prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "*",
+                                        "access": "Allow",
+                                        "priority": 100
+                                    }
+                                },
+                                {
+                                    "name": "rdp-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "3389",
+                                        "access": "Allow",
+                                        "priority": 200
+                                    }
+                                },
+                                {
+                                    "name": "vnet-deny",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "*",
+                                        "access": "Deny",
+                                        "priority": 300
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sqlNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": {
+                            "name": "sql-nsg",
+                            "securityRules": [
+                                {
+                                    "name": "biz-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet2Prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "49168",
+                                        "access": "Allow",
+                                        "priority": 100
+                                    }
+                                },
+                                {
+                                    "name": "rdp-allow",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "TCP",
+                                        "sourceAddressPrefix": "[parameters('vnet-settings').subnets.subnet0Prefix]",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "3389",
+                                        "access": "Allow",
+                                        "priority": 200
+                                    }
+                                },
+                                {
+                                    "name": "vnet-deny",
+                                    "properties": {
+                                        "direction": "Inbound",
+                                        "protocol": "*",
+                                        "sourceAddressPrefix": "*",
+                                        "sourcePortRange": "*",
+                                        "destinationAddressPrefix": "*",
+                                        "destinationPortRange": "*",
+                                        "access": "Deny",
+                                        "priority": 300
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('mgmtJbNic', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "mgmtNicLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', 'mgmtJbNsg')]",
+                "[resourceId('Microsoft.Resources/deployments', 'publicIp')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat('mgmt-jb-nic-', copyindex())]",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "publicIPAllocationMethod": "Dynamic",
+                                        "publicIPAddress": {
+                                            "id": "[reference('publicIp').outputs.pipID.value]"
+                                        },
+                                        "subnet": {
+                                            "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet0Name)]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "dnsSettings": {
+                                "dnsServers": []
+                            },
+                            "enableIPForwarding": false,
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'mgmt-jb-nsg')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('mgmtJbVm', copyindex())]",
+            "copy": {
+                "name": "mgmtVmLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', concat('mgmtJbNic', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').accounts[0]]",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat('mgmt-jb-vm-', copyindex())]",
+                            "adminUserName": "[parameters('vm-settings').adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').adminPassword]",
+                            "avsID": "[reference('sharedResources').outputs.avsID.value]",
+                            "imagePublisher": "[variables('vmImagePublisher')]",
+                            "imageOffer": "[variables('vmImageOffer')]",
+                            "imageSku": "[variables('vmImageSku')]",
+                            "nicID": "[reference(concat('mgmtJbNic', copyindex())).outputs.nicID.value]",
+                            "vmSize": "Standard_D2_v2",
+                            "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webNic', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "webNicLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', 'webNsg')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat('web-nic-', copyindex())]",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "subnet": {
+                                            "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet1Name)]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "dnsSettings": {
+                                "dnsServers": []
+                            },
+                            "enableIPForwarding": false,
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'web-nsg')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webVm', copyindex())]",
+            "copy": {
+                "name": "webVmLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', concat('webNic', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').accounts[0]]",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat('web-vm-', copyindex())]",
+                            "adminUserName": "[parameters('vm-settings').adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').adminPassword]",
+                            "avsID": "[reference('sharedResources').outputs.avsID.value]",
+                            "imagePublisher": "[variables('vmImagePublisher')]",
+                            "imageOffer": "[variables('vmImageOffer')]",
+                            "imageSku": "[variables('vmImageSku')]",
+                            "nicID": "[reference(concat('webNic', copyindex())).outputs.nicID.value]",
+                            "vmSize": "Standard_D2_v2",
+                            "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webDscExtn', copyindex())]",
+            "copy": {
+                "name": "dscScriptLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat('webVm', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('dscTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "extn-settings": {
+                        "value": {
+                            "name": "dsc-iis",
+                            "publisher": "Microsoft.Powershell",
+                            "type": "DSC",
+                            "typeHandlerVersion": "2.9",
+                            "vmName": "[concat('web-vm-', copyindex())]",
+                            "url": "[variables('dscScriptsUrl')]",
+                            "folder": "iis-on-windows-vm",
+                            "file": "iis-config-dsc",
+                            "function": "Main"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('bizNic', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "bizNicLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', 'bizNsg')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat('biz-nic-', copyindex())]",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "subnet": {
+                                            "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet2Name)]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "dnsSettings": {
+                                "dnsServers": []
+                            },
+                            "enableIPForwarding": false,
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'biz-nsg')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('bizVm', copyindex())]",
+            "copy": {
+                "name": "bizVmLoop",
+                "count": "[variables('vmCount')]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', concat('bizNic', copyindex()))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').accounts[0]]",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat('biz-vm-', copyindex())]",
+                            "adminUserName": "[parameters('vm-settings').adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').adminPassword]",
+                            "avsID": "[reference('sharedResources').outputs.avsID.value]",
+                            "imagePublisher": "[variables('vmImagePublisher')]",
+                            "imageOffer": "[variables('vmImageOffer')]",
+                            "imageSku": "[variables('vmImageSku')]",
+                            "nicID": "[reference(concat('bizNic', copyindex())).outputs.nicID.value]",
+                            "vmSize": "Standard_D2_v2",
+                            "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sqlNic",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', 'sqlNsg')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "sql-nic",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAllocationMethod": "Dynamic",
+                                        "subnet": {
+                                            "id": "[concat(reference('sharedResources').outputs.vnetID.value, '/subnets/', parameters('vnet-settings').subnets.subnet3Name)]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "dnsSettings": {
+                                "dnsServers": []
+                            },
+                            "enableIPForwarding": false,
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'sql-nsg')]"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sqlVm",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'sharedResources')]",
+                "[resourceId('Microsoft.Resources/deployments', 'sqlNic')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').accounts[0]]",
+                            "newOrExisting": "[parameters('storage-settings').newOrExisting]",
+                            "existingRg": "[parameters('storage-settings').existingRg]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "sql-vm",
+                            "adminUserName": "[parameters('vm-settings').adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').adminPassword]",
+                            "avsID": "[reference('sharedResources').outputs.avsID.value]",
+                            "imagePublisher": "MicrosoftSQLServer",
+                            "imageOffer": "SQL2016SP1-WS2016",
+                            "imageSku": "Enterprise",
+                            "nicID": "[reference('sqlNic').outputs.nicID.value]",
+                            "vmSize": "Standard_D2_v2",
+                            "storageAccountContainerName": "[toLower(concat(resourceGroup().name, '-', uniqueString(resourceGroup().id, deployment().name)))]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}

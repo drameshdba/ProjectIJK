@@ -1,0 +1,40 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "lb-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Load Balancer"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('lb-settings').name]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-03-30",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "[parameters('lb-settings').name]"
+            },
+            "properties": {
+                "frontendIPConfigurations": "[parameters('lb-settings').frontendIPConfigurations]",
+                "backendAddressPools": "[parameters('lb-settings').backendAddressPools]",
+                "loadBalancingRules": "[parameters('lb-settings').loadBalancingRules]",
+                "probes": "[parameters('lb-settings').probes]",
+                "inboundNatRules": "[parameters('lb-settings').inboundNatRules]",
+                "outboundNatRules": "[parameters('lb-settings').outboundNatRules]",
+                "inboundNatPools": "[parameters('lb-settings').inboundNatPools]"
+            }
+        }
+    ],
+    "outputs": {
+        "lbID": {
+            "value": "[resourceId('Microsoft.Network/loadBalancers', parameters('lb-settings').name)]",
+            "type": "string"
+        }
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "inboundNat-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Load Balancer"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2016-03-30",
+            "type": "Microsoft.Network/loadBalancers/inboundNatRules",
+            "copy": {
+                "name": "inboundNatLoop",
+                "count": "[parameters('inboundNat-settings').count]"
+            },
+            "name": "[concat(parameters('inboundNat-settings').name, copyIndex())]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "frontendIPConfiguration": {
+                    "id": "[parameters('inboundNat-settings').frontendPoolID]"
+                },
+                "protocol": "[parameters('inboundNat-settings').protocol]",
+                "frontendPort": "[copyIndex(parameters('inboundNat-settings').frontendPort)]",
+                "backendPort": "[parameters('inboundNat-settings').backendPort]",
+                "enableFloatingIP": "[parameters('inboundNat-settings').floatingIP]"
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

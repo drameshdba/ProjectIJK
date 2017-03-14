@@ -1,0 +1,226 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Accounts"
+            }
+        },
+        "vm-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Machines"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "resourcesUrl": "[parameters('base-config').resources]",
+        "vmTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-windows.template.json')]",
+        "math": {
+            "modulo2": [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+            "modulo3": [ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ]
+        }
+    },
+    "resources": [
+        {
+            "name": "[concat('mgmtVm', copyIndex())]",
+            "copy": {
+                "name": "mgmtVmLoop",
+                "count": "[parameters('vm-settings').mgmt.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').mgmt.accounts[variables('math').modulo2[copyIndex()]]]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(parameters('vm-settings').mgmt.name, copyIndex())]",
+                            "adminUserName": "[parameters('vm-settings').mgmt.adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').mgmt.adminPassword]",
+                            "avsID": "[parameters('vm-settings').mgmt.avsID]",
+                            "imagePublisher": "[parameters('vm-settings').mgmt.imagePublisher]",
+                            "imageOffer": "[parameters('vm-settings').mgmt.imageOffer]",
+                            "imageSku": "[parameters('vm-settings').mgmt.imageSku]",
+                            "nicID": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vm-settings').mgmt.nicName, copyIndex()))]",
+                            "vmSize": "[parameters('vm-settings').mgmt.vmSize]",
+                            "storageAccountContainerName": "[parameters('vm-settings').mgmt.storageAccountContainerName]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webVm', copyIndex())]",
+            "copy": {
+                "name": "webVmLoop",
+                "count": "[parameters('vm-settings').web.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').web.accounts[variables('math').modulo2[copyIndex()]]]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(parameters('vm-settings').web.name, copyIndex())]",
+                            "adminUserName": "[parameters('vm-settings').web.adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').web.adminPassword]",
+                            "avsID": "[parameters('vm-settings').web.avsID]",
+                            "imagePublisher": "[parameters('vm-settings').web.imagePublisher]",
+                            "imageOffer": "[parameters('vm-settings').web.imageOffer]",
+                            "imageSku": "[parameters('vm-settings').web.imageSku]",
+                            "nicID": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vm-settings').web.nicName, copyIndex()))]",
+                            "vmSize": "[parameters('vm-settings').web.vmSize]",
+                            "storageAccountContainerName": "[parameters('vm-settings').web.storageAccountContainerName]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('bizVm', copyIndex())]",
+            "copy": {
+                "name": "bizVmLoop",
+                "count": "[parameters('vm-settings').biz.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').biz.accounts[variables('math').modulo2[copyIndex()]]]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(parameters('vm-settings').biz.name, copyIndex())]",
+                            "adminUserName": "[parameters('vm-settings').biz.adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').biz.adminPassword]",
+                            "avsID": "[parameters('vm-settings').biz.avsID]",
+                            "imagePublisher": "[parameters('vm-settings').biz.imagePublisher]",
+                            "imageOffer": "[parameters('vm-settings').biz.imageOffer]",
+                            "imageSku": "[parameters('vm-settings').biz.imageSku]",
+                            "nicID": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vm-settings').biz.nicName, copyIndex()))]",
+                            "vmSize": "[parameters('vm-settings').biz.vmSize]",
+                            "storageAccountContainerName": "[parameters('vm-settings').biz.storageAccountContainerName]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('sqlVm', copyIndex())]",
+            "copy": {
+                "name": "sqlVmLoop",
+                "count": "[parameters('vm-settings').sql.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').sql.accounts[variables('math').modulo2[copyIndex()]]]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(parameters('vm-settings').sql.name, copyIndex())]",
+                            "adminUserName": "[parameters('vm-settings').sql.adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').sql.adminPassword]",
+                            "avsID": "[parameters('vm-settings').sql.avsID]",
+                            "imagePublisher": "[parameters('vm-settings').sql.imagePublisher]",
+                            "imageOffer": "[parameters('vm-settings').sql.imageOffer]",
+                            "imageSku": "[parameters('vm-settings').sql.imageSku]",
+                            "nicID": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vm-settings').sql.nicName, copyIndex()))]",
+                            "vmSize": "[parameters('vm-settings').sql.vmSize]",
+                            "storageAccountContainerName": "[parameters('vm-settings').sql.storageAccountContainerName]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('fswVm', copyIndex())]",
+            "copy": {
+                "name": "fsmVmLoop",
+                "count": "[parameters('vm-settings').fsw.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').fsw.accounts[variables('math').modulo2[copyIndex()]]]"
+                        }
+                    },
+                    "vm-settings": {
+                        "value": {
+                            "name": "[concat(parameters('vm-settings').fsw.name, copyIndex())]",
+                            "adminUserName": "[parameters('vm-settings').fsw.adminUserName]",
+                            "adminPassword": "[parameters('vm-settings').fsw.adminPassword]",
+                            "avsID": "[parameters('vm-settings').fsw.avsID]",
+                            "imagePublisher": "[parameters('vm-settings').fsw.imagePublisher]",
+                            "imageOffer": "[parameters('vm-settings').fsw.imageOffer]",
+                            "imageSku": "[parameters('vm-settings').fsw.imageSku]",
+                            "nicID": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('vm-settings').fsw.nicName, copyIndex()))]",
+                            "vmSize": "[parameters('vm-settings').fsw.vmSize]",
+                            "storageAccountContainerName": "[parameters('vm-settings').fsw.storageAccountContainerName]"
+                        }
+                    }
+                }
+            }
+        }   
+    ],
+    "outputs": {
+    }
+}

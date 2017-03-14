@@ -1,0 +1,213 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Account"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "resourcesUrl": "[parameters('base-config').resources]"
+    },
+    "resources": [
+        {
+            "name": "[concat('mgmtStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').mgmt.accounts)]"
+            },
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').mgmt.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').mgmt.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').mgmt.accountType]",
+                            "existingRg": "[parameters('storage-settings').mgmt.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').web.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').web.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').web.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').web.accountType]",
+                            "existingRg": "[parameters('storage-settings').web.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('bizStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').biz.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').biz.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').biz.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').biz.accountType]",
+                            "existingRg": "[parameters('storage-settings').biz.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('sqlStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').sql.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').sql.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').sql.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').sql.accountType]",
+                            "existingRg": "[parameters('storage-settings').sql.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('fswStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').fsw.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').fsw.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').fsw.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').fsw.accountType]",
+                            "existingRg": "[parameters('storage-settings').fsw.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('diagStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').diag.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').diag.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').diag.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').diag.accountType]",
+                            "existingRg": "[parameters('storage-settings').diag.existingRg]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('dcStorage-', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+                "name": "storageLoop",
+                "count": "[length(parameters('storage-settings').dc.accounts)]"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('resourcesUrl'), '/storage-', parameters('storage-settings').dc.newOrExisting, '.template.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": {
+                            "name": "[parameters('storage-settings').dc.accounts[copyIndex()]]",
+                            "accountType": "[parameters('storage-settings').dc.accountType]",
+                            "existingRg": "[parameters('storage-settings').dc.existingRg]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

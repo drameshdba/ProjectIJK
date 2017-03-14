@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "extn-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for a Custom Script Extension"
+            }
+        }
+    },
+    "variables": {
+        "dscScriptsUrl": "[concat(parameters('extn-settings').url, '/', parameters('extn-settings').folder, '/', parameters('extn-settings').file)]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('extn-settings').vmName, '/', parameters('extn-settings').name)]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-03-30",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "[concat(parameters('extn-settings').vmName, '/', 'CustomScript')]"
+            },
+            "properties": {
+                "publisher": "[parameters('extn-settings').publisher]",
+                "type": "[parameters('extn-settings').type]",
+                "typeHandlerVersion": "[parameters('extn-settings').typeHandlerVersion]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "fileUris": [ "[variables('dscScriptsUrl')]" ],
+                    "commandToExecute": "[concat('sh ', parameters('extn-settings').file)]"
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

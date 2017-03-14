@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnet-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Network"
+            }
+        }
+    },
+    "variables": {
+    },
+    "resources": [
+    ],
+    "outputs": {
+      "vnetID": {
+          "value": "[resourceId(parameters('vnet-settings').existingRg,'Microsoft.Network/virtualNetworks',parameters('vnet-settings').name)]",
+          "type": "string"
+      }
+    }
+}

@@ -1,0 +1,94 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storage-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Storage Accounts"
+            }
+        },
+        "vm-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Virtual Machines"
+            }
+        },
+        "extn-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for Extensions"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "dscScriptsUrl": "[parameters('base-config').dscScripts]",
+        "resourcesUrl": "[parameters('base-config').resources]",
+        "dscTemplate": "[concat(variables('resourcesUrl'), '/', 'extn-dsc.template.json')]",
+        "vmTemplate": "[concat(variables('resourcesUrl'), '/', 'vm-windows.template.json')]",
+        "math": {
+            "modulo2": [ 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 ],
+            "modulo3": [ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ]
+        }
+    },
+    "resources": [
+        {
+            "name": "createDC",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vmTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storage-settings": {
+                        "value": "[parameters('storage-settings')]"
+                    },
+                    "vm-settings": {
+                        "value": "[parameters('vm-settings')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "configureDC",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'createDC')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('dscTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "extn-settings": {
+                        "value": {
+                            "name": "[parameters('extn-settings').name]",
+                            "publisher": "[parameters('extn-settings').publisher]",
+                            "type": "[parameters('extn-settings').type]",
+                            "typeHandlerVersion": "[parameters('extn-settings').typeHandlerVersion]",
+                            "vmName": "[parameters('vm-settings').name]",
+                            "configuration": "[parameters('extn-settings').configuration]",
+                            "configurationArguments": "[parameters('extn-settings').configurationArguments]",
+                            "protectedSettings": "[parameters('extn-settings').protectedSettings]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

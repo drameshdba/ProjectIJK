@@ -1,0 +1,203 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nic-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Network Interfaces"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "resourcesUrl": "[parameters('base-config').resources]",
+        "nicTemplate": "[concat(variables('resourcesUrl'), '/', 'nic.template.json')]"
+    },
+    "resources": [
+        {
+            "name": "[concat('mgmtNic', copyIndex())]",
+            "copy": {
+                "name": "mgmtNicLoop",
+                "count": "[parameters('nic-settings').mgmt.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').mgmt.name, copyIndex())]",
+                            "ipConfigurations": "[parameters('nic-settings').mgmt.ipConfigurations]",
+                            "dnsSettings": "[parameters('nic-settings').mgmt.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').mgmt.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').mgmt.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('webNic', copyIndex())]",
+            "copy": {
+                "name": "webNicLoop",
+                "count": "[parameters('nic-settings').web.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').web.name, copyIndex())]",
+                            "ipConfigurations": "[parameters('nic-settings').web.ipConfigurations]",
+                            "dnsSettings": "[parameters('nic-settings').web.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').web.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').web.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('bizNic', copyIndex())]",
+            "copy": {
+                "name": "bizNicLoop",
+                "count": "[parameters('nic-settings').biz.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').biz.name, copyIndex())]",
+                            "ipConfigurations": "[parameters('nic-settings').biz.ipConfigurations]",
+                            "dnsSettings": "[parameters('nic-settings').biz.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').biz.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').biz.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('sqlNic', copyIndex())]",
+            "copy": {
+                "name": "sqlNicLoop",
+                "count": "[parameters('nic-settings').sql.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').sql.name, copyIndex())]",
+                            "ipConfigurations": "[parameters('nic-settings').sql.ipConfigurations]",
+                            "dnsSettings": "[parameters('nic-settings').sql.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').sql.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').sql.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('dcNic', copyIndex())]",
+            "copy": {
+                "name": "dcNicLoop",
+                "count": "[parameters('nic-settings').dc.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').dc.name, copyIndex())]",
+                            "ipConfigurations": [
+                                {
+                                    "name": "ipconfig1",
+                                    "properties": {
+                                        "privateIPAddress": "[parameters('nic-settings').dc.ipAddresses[copyIndex()]]",
+                                        "privateIPAllocationMethod": "static",
+                                        "subnet": "[parameters('nic-settings').dc.subnetId]"
+                                    }
+                                }
+                            ],
+                            "dnsSettings": "[parameters('nic-settings').dc.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').dc.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').dc.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat('fswNic', copyIndex())]",
+            "copy": {
+                "name": "fswNicLoop",
+                "count": "[parameters('nic-settings').fsw.count]"
+            },
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nic-settings": {
+                        "value": {
+                            "name": "[concat(parameters('nic-settings').fsw.name, copyIndex())]",
+                            "ipConfigurations": "[parameters('nic-settings').fsw.ipConfigurations]",
+                            "dnsSettings": "[parameters('nic-settings').fsw.dnsSettings]",
+                            "enableIPForwarding": "[parameters('nic-settings').fsw.enableIPForwarding]",
+                            "networkSecurityGroup": "[parameters('nic-settings').fsw.networkSecurityGroup]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}

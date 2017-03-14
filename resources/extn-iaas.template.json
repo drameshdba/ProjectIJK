@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "extn-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for a Infrastructure as a Service Extension"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[concat(parameters('extn-settings').vmName, '/', parameters('extn-settings').name)]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-03-30",
+            "dependsOn": [],
+            "tags": {
+                "displayName": "[concat(parameters('extn-settings').vmName, '/', 'IaaS')]"
+            },
+            "properties": {
+                "publisher": "[parameters('extn-settings').publisher]",
+                "type": "[parameters('extn-settings').type]",
+                "typeHandlerVersion": "[parameters('extn-settings').typeHandlerVersion]",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "AutoTelemetrySettings": "[parameters('extn-settings').AutoTelemetrySettings]",
+                    "AutoPatchingSettings": "[parameters('extn-settings').AutoPatchingSettings]",
+                    "AutoBackupSettings": "[parameters('extn-settings').AutoBackupSettings]",
+                    "KeyVaultCredentialSettings": "[parameters('extn-settings').KeyVaultCredentialSettings]",
+                    "ServerConfigurationsManagementSettings": "[parameters('extn-settings').ServerConfigurationsManagementSettings]"
+                },
+                "protectedSettings": "[parameters('extn-settings').protectedSettings]"
+            }
+        }        
+    ],
+    "outputs": {
+    }
+}

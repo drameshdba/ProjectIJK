@@ -1,0 +1,116 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nsg-settings": {
+            "type": "object",
+            "metadata": {
+                "description": "These are settings for the Availability Sets"
+            }
+        },
+        "base-config": {
+            "type": "object",
+            "metadata": {
+                "description": "Base config for respository Url and Branch for Resource and Shared Templates"
+            }
+        }
+    },
+    "variables": {
+        "resourcesUrl": "[parameters('base-config').resources]",
+        "nsgTemplate": "[concat(variables('resourcesUrl'), '/', 'nsg.template.json')]"
+    },
+    "resources": [
+        {
+            "name": "mgmtNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": "[parameters('nsg-settings').mgmt]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "webNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": "[parameters('nsg-settings').web]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "bizNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": "[parameters('nsg-settings').biz]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "sqlNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": "[parameters('nsg-settings').sql]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "dcNsg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nsg-settings": {
+                        "value": "[parameters('nsg-settings').dc]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    }
+}
